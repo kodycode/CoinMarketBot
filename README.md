@@ -4,9 +4,10 @@ A Discord bot that reports data from https://coinmarketcap.com/
 Created with the python ![CoinMarketCap API](https://github.com/mrsmn/coinmarketcap-api) wrapper.
 
 ## Installation:
-1. Rename config_template.py to config.py
-2. Enter your discord token inside the token variable in config.py
-3. Run with ```python bot.py```
+1. Install necessary requirements using ```pip install -r requirements.txt```
+2. Rename config_template.py to config.py
+3. Enter your discord token inside the token variable in config.py
+4. Run with ```python bot.py```
 
 
 ## Commands:
