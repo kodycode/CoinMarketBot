@@ -8,7 +8,7 @@ format_currency_props = [
     "market_cap_usd",
     "available_supply",
     "total_supply",
-    "price_usd"
+    "24h_volume_cash"
 ]
 
 
@@ -55,7 +55,7 @@ class CoinMarket:
                     elif prop == "last_updated":
                         converted_time = datetime.datetime.fromtimestamp(int(json[prop]))
                         formatted_data += "{}: {}\n".format(prop, converted_time.strftime('%Y-%m-%d %H:%M:%S'))
-                        formatted_data += "(Time may vary depending on the timezone you're in)"
+                        formatted_data += "(Time may vary depending on the timezone you're in)\n"
                     else:
                         formatted_data += "{}: {}\n".format(prop, json[prop])
 
