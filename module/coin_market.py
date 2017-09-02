@@ -1,5 +1,15 @@
 from discord.ext import commands
 from coinmarketcap import Market
+import datetime
+
+format_currency_props = [
+    "price_usd",
+    "24h_volume_usd",
+    "market_cap_usd",
+    "available_supply",
+    "total_supply",
+    "price_usd"
+]
 
 
 class CoinMarketException(Exception):
@@ -40,7 +50,14 @@ class CoinMarket:
         for json in data:
             for prop in json:
                 if prop != 'id':
-                    formatted_data += "{}: {}\n".format(prop, json[prop])
+                    if prop in format_currency_props:
+                        formatted_data += "{}: {:,}\n".format(prop, float(json[prop]))
+                    elif prop == "last_updated":
+                        converted_time = datetime.datetime.fromtimestamp(int(json[prop]))
+                        formatted_data += "{}: {}\n".format(prop, converted_time.strftime('%Y-%m-%d %H:%M:%S'))
+                        formatted_data += "(Time may vary depending on the timezone you're in)"
+                    else:
+                        formatted_data += "{}: {}\n".format(prop, json[prop])
 
         return formatted_data
 
@@ -76,7 +93,7 @@ class CoinMarket:
         stats = self._fetch_coinmarket_stats()
         formatted_stats = ''
         for stat in stats:
-            formatted_stats += "{}: {}\n".format(stat, stats[stat])
+            formatted_stats += "{}: {:,}\n".format(stat, stats[stat])
 
         return formatted_stats
 
