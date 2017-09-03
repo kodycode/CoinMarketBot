@@ -4,7 +4,7 @@ import config
 bot = commands.Bot(command_prefix='$', description='Displays market data from https://coinmarketcap.com/')
 
 initial_extensions = [
-    'module.coin_market'
+    'cogs.coin_market'
 ]
 
 
