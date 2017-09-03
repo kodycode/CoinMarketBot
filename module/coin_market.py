@@ -17,7 +17,9 @@ class CoinMarketException(Exception):
 
 
 class CoinMarket:
-
+    '''
+    Handles CoinMarketCap API features
+    '''
     def __init__(self, bot):
         '''
         Initiates CoinMarket
@@ -59,6 +61,7 @@ class CoinMarket:
                     else:
                         formatted_data += "{}: {}\n".format(prop, json[prop])
 
+        formatted_data += '**```{}```**'.format(formatted_data)
         return formatted_data
 
     @commands.command(name='search', description='Displays the data of the specified currency.')
@@ -95,6 +98,7 @@ class CoinMarket:
         for stat in stats:
             formatted_stats += "{}: {:,}\n".format(stat, stats[stat])
 
+        formatted_stats = '**```{}```**'.format(formatted_stats)
         return formatted_stats
 
     @commands.command(name='stats', description='Displays the market stats.')
