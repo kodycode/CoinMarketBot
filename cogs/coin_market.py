@@ -61,7 +61,7 @@ class CoinMarket:
                     else:
                         formatted_data += "{}: {}\n".format(prop, json[prop])
 
-        formatted_data += '**```{}```**'.format(formatted_data)
+        formatted_data = '**```{}```**'.format(formatted_data)
         return formatted_data
 
     @commands.command(name='search', description='Displays the data of the specified currency.')
