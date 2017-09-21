@@ -25,6 +25,7 @@ Click ![here](https://discordapp.com/oauth2/authorize?&client_id=353373501274456
 - ~~24h bot hosting~~
 - Improve formatting of the results
 - Secure code
+- Live Updates
 
 ## Donations
 
