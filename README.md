@@ -8,7 +8,7 @@ Click ![here](https://discordapp.com/oauth2/authorize?&client_id=353373501274456
 ## Installation:
 1. Install necessary requirements using ```pip install -r requirements.txt```
 2. Rename config_template.json to config.json
-3. Enter your discord token inside the token variable in config.py
+3. Enter your discord token inside the token variable in config.json
 4. Run with ```python bot.py```
 
 
