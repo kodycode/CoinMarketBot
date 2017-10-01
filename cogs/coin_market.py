@@ -39,7 +39,7 @@ class CoinMarket:
         '''
         return self.market.ticker(currency, convert=fiat)
 
-    def _format_currency_data(self, currency, fiat):
+    def _format_currency_data(self, data, currency, fiat):
         '''
         Formats the data fetched
 
@@ -47,25 +47,26 @@ class CoinMarket:
         @param fiat - desired currency (i.e. 'EUR', 'USD')
         @return - formatted currency data
         '''
-        data = self._fetch_currency_data(currency, fiat)
         formatted_data = ''
-        for json in data:
-            for prop in json:
-                if prop != 'id':
-                    if prop in format_currency_props:
-                        formatted_data += "{}: {:,}\n".format(prop, float(json[prop]))
-                    elif prop == "last_updated":
-                        converted_time = datetime.datetime.fromtimestamp(int(json[prop]))
-                        formatted_data += "{}: {}\n".format(prop, converted_time.strftime('%Y-%m-%d %H:%M:%S'))
-                        formatted_data += "(Time may vary depending on the timezone you're in)\n"
-                    else:
-                        formatted_data += "{}: {}\n".format(prop, json[prop])
+        for obj in data:
+            hour_trend = ''
+            if float(obj['percent_change_1h']) >= 0:
+                hour_trend = ':arrow_upper_right:'
+            else:
+                hour_trend = ':arrow_lower_right:'
 
-        formatted_data = '**```{}```**'.format(formatted_data)
+            formatted_data += '__**#{}. {} ({})**__ {}\n'.format(obj['rank'], obj['name'], obj['symbol'], hour_trend)
+            formatted_data += 'Price (USD): **${:,}**\n'.format(float(obj['price_usd']))
+            formatted_data += 'Market Cap (USD): **${:,}**\n'.format(float(obj['market_cap_usd']))
+            formatted_data += 'Available Supply: **{:,}**\n'.format(float(obj['available_supply']))
+            formatted_data += 'Percent Change (1H): **{}%**\n'.format(obj['percent_change_1h'])
+            formatted_data += 'Percent Change (24H): **{}%**\n'.format(obj['percent_change_24h'])
+            formatted_data += 'Percent Change (7D): **{}%**\n'.format(obj['percent_change_7d'])
+
         return formatted_data
 
     @commands.command(name='search', description='Displays the data of the specified currency.')
-    async def display_currency(self, currency: str, fiat=''):
+    async def display_currency(self, currency: str, fiat='USD'):
         '''
         Obtains the data of the specified currency and displays them.
 
@@ -73,11 +74,12 @@ class CoinMarket:
         @param fiat - desired currency (i.e. 'EUR', 'USD')
         '''
         try:
-            data = self._format_currency_data(currency, fiat)
-            await self.bot.say(data)
-        except:
+            data = self._fetch_currency_data(currency, fiat)
+            formatted_data = self._format_currency_data(data, currency, fiat)
+            await self.bot.say(formatted_data)
+        except Exception as e:
             await self.bot.say("Failed to find the specified currency.")
-            raise CoinMarketException("Failed to find the specified currency.")
+            raise CoinMarketException(e)
 
     def _fetch_coinmarket_stats(self):
         '''
@@ -87,18 +89,19 @@ class CoinMarket:
         '''
         return self.market.stats()
 
-    def _format_coinmarket_stats(self):
+    def _format_coinmarket_stats(self, stats):
         '''
-        Formats coinmarket stats
+        Receives and formats coinmarket stats
 
         @return - formatted stats
         '''
-        stats = self._fetch_coinmarket_stats()
         formatted_stats = ''
-        for stat in stats:
-            formatted_stats += "{}: {:,}\n".format(stat, stats[stat])
+        formatted_stats += "Total Market Cap (USD): **${:,}**\n".format(float(stats['total_market_cap_usd']))
+        formatted_stats += "Bitcoin Percentage of Market: **{:,}%**\n".format(stats['bitcoin_percentage_of_market_cap'])
+        formatted_stats += "Active Markets: **{:,}**\n".format(stats['active_markets'])
+        formatted_stats += "Active Currencies: **{:,}**\n".format(stats['active_currencies'])
+        formatted_stats += "Active Assets: **{:,}**\n".format(stats['active_assets'])
 
-        formatted_stats = '**```{}```**'.format(formatted_stats)
         return formatted_stats
 
     @commands.command(name='stats', description='Displays the market stats.')
@@ -107,11 +110,12 @@ class CoinMarket:
         Displays the market stats
         '''
         try:
-            stats = self._format_coinmarket_stats()
-            await self.bot.say(stats)
-        except:
+            stats = self._fetch_coinmarket_stats()
+            formatted_stats = self._format_coinmarket_stats(stats)
+            await self.bot.say(formatted_stats)
+        except Exception as e:
             await self.bot.say("Failed to gather coinmarket stats.")
-            raise CoinMarketException("Failed to gather coinmarket stats.")
+            raise CoinMarketException(e)
 
 
 def setup(bot):
