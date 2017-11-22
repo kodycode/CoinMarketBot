@@ -1,3 +1,11 @@
 {
-    "token": "Paste your Discord token here"
+    "token": "Enter your Discord token here",
+    "live_channel": "Enter the channel ID to post live updates",
+    "live_update_interval": "60",
+    "live_check_currency": [
+        "bitcoin",
+        "ethereum",
+        "bitcoin-cash",
+        "litecoin"
+    ]
 }

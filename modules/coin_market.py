@@ -1,15 +1,4 @@
-from discord.ext import commands
 from coinmarketcap import Market
-import datetime
-
-format_currency_props = [
-    "price_usd",
-    "24h_volume_usd",
-    "market_cap_usd",
-    "available_supply",
-    "total_supply",
-    "24h_volume_cash"
-]
 
 
 class CoinMarketException(Exception):
@@ -20,13 +9,12 @@ class CoinMarket:
     '''
     Handles CoinMarketCap API features
     '''
-    def __init__(self, bot):
+    def __init__(self):
         '''
         Initiates CoinMarket
 
         @param bot - discord bot object
         '''
-        self.bot = bot
         self.market = Market()
 
     def _fetch_currency_data(self, currency, fiat):
@@ -65,10 +53,9 @@ class CoinMarket:
 
         return formatted_data
 
-    @commands.command(name='search', description='Displays the data of the specified currency.')
-    async def display_currency(self, currency: str, fiat='USD'):
+    async def get_currency(self, currency: str, fiat='USD'):
         '''
-        Obtains the data of the specified currency and displays them.
+        Obtains the data of the specified currency and returns them.
 
         @param currency - the cryptocurrency to search for (i.e. 'bitcoin', 'ethereum')
         @param fiat - desired currency (i.e. 'EUR', 'USD')
@@ -76,10 +63,9 @@ class CoinMarket:
         try:
             data = self._fetch_currency_data(currency, fiat)
             formatted_data = self._format_currency_data(data, currency, fiat)
-            await self.bot.say(formatted_data)
         except Exception as e:
-            await self.bot.say("Failed to find the specified currency.")
-            raise CoinMarketException(e)
+            formatted_data = "Unable to find the currency specified: " + currency
+        return formatted_data
 
     def _fetch_coinmarket_stats(self):
         '''
@@ -104,19 +90,29 @@ class CoinMarket:
 
         return formatted_stats
 
-    @commands.command(name='stats', description='Displays the market stats.')
-    async def display_stats(self):
+    async def get_stats(self):
         '''
-        Displays the market stats
+        Returns the market stats
         '''
         try:
             stats = self._fetch_coinmarket_stats()
             formatted_stats = self._format_coinmarket_stats(stats)
-            await self.bot.say(formatted_stats)
+            return formatted_stats
         except Exception as e:
-            await self.bot.say("Failed to gather coinmarket stats.")
             raise CoinMarketException(e)
 
+    async def get_live_data(self, currency_list, fiat='USD'):
+        '''
+        Returns updated info of coin stats
 
-def setup(bot):
-    bot.add_cog(CoinMarket(bot))
+        @param currency_list - list of cryptocurrencies
+        @param fiat - desired currency (i.e. 'EUR', 'USD')
+        '''
+        try:
+            formatted_data = ''
+            for currency in currency_list:
+                data = self._fetch_currency_data(currency, fiat)
+                formatted_data += self._format_currency_data(data, currency, fiat) + '\n'
+            return formatted_data
+        except Exception as e:
+            raise CoinMarketException(e)

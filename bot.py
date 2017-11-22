@@ -1,11 +1,13 @@
-from discord.ext import commands
+import discord
 import json
+from command_handler import CmdHandler
 
-bot = commands.Bot(command_prefix='$', description='Displays market data from https://coinmarketcap.com/')
-
-initial_extensions = [
-    'cogs.coin_market'
-]
+# Wrapping this at some point
+client = discord.Client()
+config_file = open('config.json')
+config_str = config_file.read()
+config_data = json.loads(config_str)
+handle = CmdHandler(config_data)
 
 
 class CoinMarketBotException(Exception):
@@ -15,35 +17,22 @@ class CoinMarketBotException(Exception):
 class CoinMarketBot:
     '''Initiates the Bot'''
 
-    def __init__(self, token):
-        bot.run(token)
+    def __init__(self, config_data):
+        client.run(config_data["token"])
 
-    @bot.async_event
+    @client.event
     async def on_ready():
-        for extension in initial_extensions:
-            try:
-                bot.load_extension(extension)
-                print('CoinMarketDiscordBot is online.')
-            except Exception as e:
-                CoinMarketBotException('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
-                return
+        print('CoinMarketDiscordBot is online.')
 
-    @bot.event
+    @client.event
     async def on_message(message):
-        await bot.process_commands(message)
-
-    @bot.on_error
-    async def on_error(error):
-        pass
+        if message.author != client.user:
+            await handle.process_command(client, message)
 
 
 def main():
     try:
-        config_file = open('config.json')
-        config_str = config_file.read()
-        config_data = json.loads(config_str)
-        token = config_data['token']
-        CoinMarketBot(token)
+        CoinMarketBot(config_data)
     except Exception as e:
         print(e)
 
