@@ -4,9 +4,9 @@ from command_handler import CmdHandler
 
 # Wrapping this at some point
 client = discord.Client()
-config_file = open('config.json')
-config_str = config_file.read()
-config_data = json.loads(config_str)
+config_data = ''
+with open('config.json') as config:
+    config_data = json.load(config)
 handle = CmdHandler(config_data)
 
 

@@ -46,7 +46,7 @@ class CoinMarketCommand:
                                       "particular fiat is optional.")
         em = discord.Embed(title="Search results",
                            description=data,
-                           colour=0x0)
+                           colour=0x008000)
         await client.send_message(message.channel, embed=em)
 
     async def stats(self, client, message):
@@ -59,7 +59,7 @@ class CoinMarketCommand:
         data = await self.coin_market.get_stats()
         em = discord.Embed(title="Market Stats",
                            description=data,
-                           colour=0x0)
+                           colour=0x008000)
         await client.send_message(message.channel, embed=em)
 
     async def live(self, currency_list, live_channel, timer, client, message):
@@ -89,7 +89,7 @@ class CoinMarketCommand:
                     data = await self.coin_market.get_live_data(currency_list)
                 em = discord.Embed(title="Live Currency Update",
                                    description=data,
-                                   colour=0x0)
+                                   colour=0x008000)
                 await client.send_message(client.get_channel(live_channel),
                                           embed=em)
                 await asyncio.sleep(float(timer))
