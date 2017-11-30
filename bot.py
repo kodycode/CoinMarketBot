@@ -11,11 +11,11 @@ handle = CmdHandler(config_data)
 
 
 class CoinMarketBotException(Exception):
-    '''Exception class for CoinMarketBot'''
+    """Exception class for CoinMarketBot"""
 
 
 class CoinMarketBot:
-    '''Initiates the Bot'''
+    """Initiates the Bot"""
 
     def __init__(self, config_data):
         client.run(config_data["token"])

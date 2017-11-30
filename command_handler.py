@@ -4,9 +4,9 @@ import discord
 
 
 class CmdHandler:
-    '''
+    """
     Processes commands sent from Discord
-    '''
+    """
     def __init__(self, config_data):
         self.coin_market_prefix = '$'
         self.coin_market_cmd_handler = CoinMarketCommand()
@@ -20,20 +20,20 @@ class CmdHandler:
 
 
 class CoinMarketCommand:
-    '''
+    """
     Handles all Coin Market Cap related commands
-    '''
+    """
     def __init__(self):
         self.coin_market = CoinMarket()
         self.live_on = False
 
     async def search(self, client, message):
-        '''
+        """
         Displays the data of the specified currency.
 
         @param client - bot client
         @param message - command received
-        '''
+        """
         param = message.content.split()
         data = ''
         if len(param) == 3:
@@ -50,12 +50,12 @@ class CoinMarketCommand:
         await client.send_message(message.channel, embed=em)
 
     async def stats(self, client, message):
-        '''
+        """
         Displays the market stats.
 
         @param client - bot client
         @param message - command received
-        '''
+        """
         data = await self.coin_market.get_stats()
         em = discord.Embed(title="Market Stats",
                            description=data,
@@ -63,7 +63,7 @@ class CoinMarketCommand:
         await client.send_message(message.channel, embed=em)
 
     async def live(self, currency_list, live_channel, timer, client, message):
-        '''
+        """
         Displays live updates of coin stats in n-second intervals
 
         @param currency_list - list of currencies
@@ -71,7 +71,7 @@ class CoinMarketCommand:
         @param timer - time interval between live updates
         @param client - bot client
         @param message - command received
-        '''
+        """
         if not self.live_on:
             self.live_on = True
             param = message.content.split()
@@ -95,12 +95,12 @@ class CoinMarketCommand:
                 await asyncio.sleep(float(timer))
 
     async def process_command(self, config_data, client, message):
-        '''
+        """
         Processes commands to use
 
         @param client - bot client
         @param message - command received
-        '''
+        """
         if message.content.startswith("$search"):
             await self.search(client, message)
         elif message.content.startswith("$stats"):
