@@ -36,6 +36,7 @@ class CoinMarket:
         @return - formatted currency data
         """
         try:
+            isPositivePercent = True
             formatted_data = ''
             for obj in data:
                 hour_trend = ''
@@ -43,6 +44,7 @@ class CoinMarket:
                     hour_trend = ':arrow_upper_right:'
                 else:
                     hour_trend = ':arrow_lower_right:'
+                    isPositivePercent = False
 
                 formatted_data += '__**#{}. {} ({})**__ {}\n'.format(obj['rank'], obj['name'], obj['symbol'], hour_trend)
                 formatted_data += 'Price (USD): **${:,}**\n'.format(float(obj['price_usd']))
@@ -58,7 +60,7 @@ class CoinMarket:
                 formatted_data += 'Percent Change (24H): **{}%**\n'.format(obj['percent_change_24h'])
                 formatted_data += 'Percent Change (7D): **{}%**\n'.format(obj['percent_change_7d'])
 
-            return formatted_data
+            return formatted_data, isPositivePercent
         except Exception as e:
             print("Failed to format data: " + e)
 
@@ -71,10 +73,10 @@ class CoinMarket:
         """
         try:
             data = self._fetch_currency_data(currency, fiat)
-            formatted_data = self._format_currency_data(data, currency, fiat)
+            formatted_data, isPositivePercent = self._format_currency_data(data, currency, fiat)
         except Exception as e:
             formatted_data = "Unable to find the currency specified: " + currency
-        return formatted_data
+        return formatted_data, isPositivePercent
 
     def _fetch_coinmarket_stats(self):
         """

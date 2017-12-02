@@ -35,18 +35,22 @@ class CoinMarketCommand:
         @param message - command received
         """
         param = message.content.split()
-        data = ''
         if len(param) == 3:
-            data = await self.coin_market.get_currency(param[1], param[2])
+            data, isPositivePercent = await self.coin_market.get_currency(param[1], param[2])
         elif len(param) == 2:
-            data = await self.coin_market.get_currency(param[1])
+            data, isPositivePercent = await self.coin_market.get_currency(param[1])
         else:
             await client.send_message(message.channel,
                                       "Please enter a currency to search. A "
                                       "particular fiat is optional.")
-        em = discord.Embed(title="Search results",
-                           description=data,
-                           colour=0x008000)
+        if isPositivePercent:
+            em = discord.Embed(title="Search results",
+                               description=data,
+                               colour=0x009993)
+        else:
+            em = discord.Embed(title="Search results",
+                               description=data,
+                               colour=0xD14836)
         await client.send_message(message.channel, embed=em)
 
     async def stats(self, client, message):
@@ -75,7 +79,6 @@ class CoinMarketCommand:
         if not self.live_on:
             self.live_on = True
             param = message.content.split()
-            data = ''
             while True:
                 try:
                     await client.purge_from(client.get_channel(live_channel),
@@ -89,7 +92,7 @@ class CoinMarketCommand:
                     data = await self.coin_market.get_live_data(currency_list)
                 em = discord.Embed(title="Live Currency Update",
                                    description=data,
-                                   colour=0x008000)
+                                   colour=0xFFD700)
                 await client.send_message(client.get_channel(live_channel),
                                           embed=em)
                 await asyncio.sleep(float(timer))
