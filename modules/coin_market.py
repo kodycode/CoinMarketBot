@@ -130,7 +130,7 @@ class CoinMarket:
             formatted_data = ''
             for currency in currency_list:
                 data = self._fetch_currency_data(currency, fiat)
-                formatted_data += self._format_currency_data(data, currency, fiat) + '\n'
+                formatted_data += self._format_currency_data(data, currency, fiat)[0] + '\n'
             return formatted_data
         except Exception as e:
             raise CoinMarketException(e)
