@@ -71,6 +71,7 @@ class CoinMarket:
         @param currency - the cryptocurrency to search for (i.e. 'bitcoin', 'ethereum')
         @param fiat - desired currency (i.e. 'EUR', 'USD')
         """
+        isPositivePercent = False
         try:
             data = self._fetch_currency_data(currency, fiat)
             formatted_data, isPositivePercent = self._format_currency_data(data, currency, fiat)
