@@ -23,6 +23,10 @@ This bot now also supports live status updates for cryptocurrencies with the `$l
 | $live [Currency to convert to (i.e. USD, EUR, etc.)] | Displays live updates of coin stats in n-second intervals (see Installation for more information) |
 | $help (temporarily unavailable) | Displays available commands and descriptions of them |
 
+***Currencies supported:***
+
+USD, AUD, BRL, CAD, CHF, CLP, CNY, CZK, DKK, EUR, GBP, HKD, HUF, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PKR, PLN, RUB, SEK, SGD, THB, TRY, TWD, ZAR
+
 ## TODO:
 
 - ~~24h bot hosting~~
