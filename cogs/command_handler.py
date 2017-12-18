@@ -38,8 +38,8 @@ class CoinMarketCommand:
         An example for this command would be:
         "$search bitcoin"
 
-        @param self.bot - bot self.bot
-        @param message - command received
+        @param currency - cryptocurrency to search for
+        @param fiat - desired currency (i.e. 'EUR', 'USD')
         """
         await self.display_search(currency, fiat)
 
@@ -50,8 +50,8 @@ class CoinMarketCommand:
         An example for this command would be:
         "$s bitcoin"
 
-        @param self.bot - bot self.bot
-        @param message - command received
+        @param currency - cryptocurrency to search for
+        @param fiat - desired currency (i.e. 'EUR', 'USD')
         """
         await self.display_search(currency, fiat)
 
@@ -62,8 +62,7 @@ class CoinMarketCommand:
         An example for this command would be:
         "$stats"
 
-        @param self.bot - bot self.bot
-        @param message - command received
+        @param fiat - desired currency (i.e. 'EUR', 'USD')
         """
         try:
             data = await self.coin_market.get_stats(fiat)
@@ -81,11 +80,7 @@ class CoinMarketCommand:
         An example for this command would be:
         "$live"
 
-        @param currency_list - list of currencies
-        @param live_channel - the channel to message in
-        @param timer - time interval between live updates
-        @param self.bot - bot self.bot
-        @param message - command received
+        @param fiat - desired currency (i.e. 'EUR', 'USD')
         """
         try:
             currency_list = self.config_data['live_check_currency']
