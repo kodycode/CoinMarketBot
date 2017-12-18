@@ -29,7 +29,9 @@ class CoinMarketCommand:
 
     async def search(self, client, message):
         """
-        Displays the data of the specified currency.
+        Displays the data of the specified currency. An
+        example for this command would be:
+        "$search bitcoin"
 
         @param client - bot client
         @param message - command received
@@ -55,7 +57,9 @@ class CoinMarketCommand:
 
     async def stats(self, client, message):
         """
-        Displays the market stats.
+        Displays the market stats. An
+        example for this command would be:
+        "$stats"
 
         @param client - bot client
         @param message - command received
@@ -68,7 +72,9 @@ class CoinMarketCommand:
 
     async def live(self, currency_list, live_channel, timer, client, message):
         """
-        Displays live updates of coin stats in n-second intervals
+        Displays live updates of coin stats in n-second intervals. An
+        example for this command would be:
+        "$live"
 
         @param currency_list - list of currencies
         @param live_channel - the channel to message in
