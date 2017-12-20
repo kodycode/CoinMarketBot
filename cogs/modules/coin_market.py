@@ -18,8 +18,16 @@ fiat_suffix = [
 ]
 
 
+class CurrencyException(Exception):
+    """Exception class for invalid currencies"""
+
+
 class FiatException(Exception):
-    """Exception class for incorrect fiat"""
+    """Exception class for invalid fiat"""
+
+
+class MarketStatsException(Exception):
+    """Exception class for invalid retrieval of market stats"""
 
 
 class CoinMarketException(Exception):
@@ -59,7 +67,12 @@ class CoinMarket:
         @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
         @return - currency data
         """
-        return self.market.ticker(currency, convert=fiat)
+        try:
+            return self.market.ticker(currency, convert=fiat)
+        except Exception:
+            raise CurrencyException("Failed to find currency: {}. Check if "
+                                    "this currency is valid and also check for "
+                                    "spelling errors.".format(currency))
 
     def _format_currency_data(self, data, fiat):
         """
@@ -113,12 +126,13 @@ class CoinMarket:
             fiat = self._fiat_check(fiat)
             data = self._fetch_currency_data(currency, fiat)[0]
             formatted_data, isPositivePercent = self._format_currency_data(data, fiat)
+            return formatted_data, isPositivePercent
+        except CurrencyException as e:
+            raise
         except FiatException as e:
             raise
         except Exception as e:
-            print(e)
-            formatted_data = "Unable to find the currency specified: {}".format(currency)
-        return formatted_data, isPositivePercent
+            raise CoinMarketException(e)
 
     def _fetch_coinmarket_stats(self, fiat):
         """
@@ -127,7 +141,11 @@ class CoinMarket:
         @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
         @return - market stats
         """
-        return self.market.stats(convert=fiat)
+        try:
+            return self.market.stats(convert=fiat)
+        except Exception as e:
+            raise MarketStatsException("Unable to retrieve crypto market stats "
+                                       "at this time.")
 
     def _format_coinmarket_stats(self, stats, fiat):
         """
@@ -167,6 +185,8 @@ class CoinMarket:
             return formatted_stats
         except FiatException as e:
             raise
+        except MarketStatsException as e:
+            raise
         except Exception as e:
             raise CoinMarketException(e)
 
@@ -187,6 +207,8 @@ class CoinMarket:
             for data in data_list:
                 formatted_data += self._format_currency_data(data, fiat)[0] + '\n'
             return formatted_data
+        except CurrencyException as e:
+            raise
         except FiatException as e:
             raise
         except Exception as e:

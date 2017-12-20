@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.modules.coin_market import CoinMarket, FiatException
+from cogs.modules.coin_market import CoinMarket, CurrencyException, FiatException, MarketStatsException
 import asyncio
 import json
 
@@ -45,6 +45,8 @@ class CoinMarketCommand:
                                        description=data,
                                        colour=0xD14836)
             await self.bot.say(embed=em)
+        except CurrencyException as e:
+            await self.bot.say(e)
         except FiatException as e:
             error_msg = str(e)
             error_msg += "\nIf you're doing multiple searches, please "
@@ -90,6 +92,8 @@ class CoinMarketCommand:
                                description=data,
                                colour=0x008000)
             await self.bot.say(embed=em)
+        except MarketStatsException as e:
+            await self.bot.say(e)
         except FiatException as e:
             await self.bot.say(e)
 
@@ -122,6 +126,9 @@ class CoinMarketCommand:
                     await self.bot.send_message(self.bot.get_channel(live_channel),
                                                 embed=em)
                     await asyncio.sleep(float(timer))
+        except CurrencyException as e:
+            self.live_on = False
+            await self.bot.say(e)
         except FiatException as e:
             self.live_on = False
             await self.bot.say(e)
