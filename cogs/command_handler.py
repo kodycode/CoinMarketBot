@@ -180,7 +180,7 @@ class CoinMarketCommand:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    async def calculate_profit(self, currency, currency_amt: float, cost: float, fiat):
+    async def calculate_profit(self, currency, currency_amt, cost, fiat):
         """
         Performs calculation operation
 
@@ -229,7 +229,7 @@ class CoinMarketCommand:
             logger.error("Exception: {}".format(str(e)))
 
     @commands.command(name='profit')
-    async def profit(self, currency, currency_amt, cost, fiat='USD'):
+    async def profit(self, currency, currency_amt: float, cost: float, fiat='USD'):
         """
         Calculates profit made from buying cryptocurrency.
         An example for this command would be:
@@ -243,7 +243,7 @@ class CoinMarketCommand:
         await self.calculate_profit(currency, currency_amt, cost, fiat)
 
     @commands.command(name='p', hidden=True)
-    async def p(self, currency, currency_amt, cost, fiat='USD'):
+    async def p(self, currency, currency_amt: float, cost: float, fiat='USD'):
         """
         Shortcut for $profit command.
 
