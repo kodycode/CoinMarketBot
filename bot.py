@@ -6,7 +6,7 @@ import logging
 bot = commands.Bot(command_prefix='$', description='Displays market data from https://coinmarketcap.com/')
 
 initial_extensions = [
-    'cogs.command_handler'
+    'cogs.coin_market_cmd_handler'
 ]
 
 
