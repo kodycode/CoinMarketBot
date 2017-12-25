@@ -1,7 +1,7 @@
 # CoinMarketDiscordBot
 A Discord bot that reports data from https://coinmarketcap.com/
 
-Created with the python [CoinMarketCap API](https://github.com/mrsmn/coinmarketcap-api) wrapper.
+Created with Python 3.6 and the [CoinMarketCap API](https://github.com/mrsmn/coinmarketcap-api) wrapper.
 
 Click [here](https://discordapp.com/oauth2/authorize?&client_id=353373501274456065&scope=bot) to add the bot to your server.
 
