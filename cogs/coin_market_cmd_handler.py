@@ -383,6 +383,8 @@ class CoinMarketFunctionality:
                     await self.bot.send_message(self.bot.get_channel(live_channel),
                                                 embed=em)
                     await asyncio.sleep(float(timer))
+            else:
+                await self.bot.say("Live updates are already on.")
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             self.live_on = False
