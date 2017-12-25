@@ -1,2 +1,2 @@
-coinmarketcap==3.0.1
-discord.py==0.16.11
+coinmarketcap==4.1.1
+discord.py==0.16.12
