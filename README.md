@@ -18,20 +18,15 @@ This bot now also supports live status updates for cryptocurrencies with the `$l
 ***It's recommended that you make a separate channel specifically for this command for it will erase the messages within the channel with each iteration.***
 
 ## Commands:
-| Commands      | Arguments | Output        |
-| ------------- | --------- | :------------:|
-| $search or $s | **1.** Cryptocurrency to search for (i.e. bitcoin)<br>For multiple searches, seperate each coin with a comma (i.e. bitcoin,ethereum,litecoin)<br>**2.** (Optional) Currency to convert to (i.e. USD, EUR, etc.) | Displays the data of the specified currency. |
-| $profit or $p | **1.** Cryptocurrency to search for (i.e. bitcoin)<br>**2.** Amount of crypto coins(i.e. 500)<br>**3.** Cost of each crypto coin that was bought at (i.e. 43.99)<br>**4.** (Optional) Currency to convert to (i.e. USD, EUR, etc.) | Determines how much profit you've made based on the cryptocurrency you specify, the amount of coins that was bought, and the price of each coin |
-| $cc | **1.** Cryptocurrency to search for (i.e. bitcoin)<br>**2.** Amount of crypto coins(i.e. 500)<br>**3.** (Optional) Currency to convert to (i.e. USD, EUR, etc.) | Displays conversion results from an x amount of coins to fiat currency |
-| $cf | **1.** Cryptocurrency to search for (i.e. bitcoin)<br>**2.** Amount of money to convert to coins(i.e. 99.99)<br>**3.** (Optional) Currency to convert to (i.e. USD, EUR, etc.) | Displays conversion results from fiat currency to an x amount of coins |
-| $stats | (Optional) Currency to convert to (i.e. USD, EUR, etc.) | Displays the overall stats of the coin market |
-| $live | (Optional) Currency to convert to (i.e. USD, EUR, etc.) | Displays live updates of coin stats in n-second intervals (see Installation for more information) |
-| $help | | Displays available commands and descriptions of them |
-
-If no fiat currency is entered, the command will default to display in USD.
-
-***Currencies supported:***
-
-USD, AUD, BRL, CAD, CHF, CLP, CNY, CZK, DKK, EUR, GBP, HKD, HUF, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PKR, PLN, RUB, SEK, SGD, THB, TRY, TWD, ZAR
+See wiki page [here](https://github.com/kodycode/CoinMarketDiscordBot/wiki/Command-Page) or type ```$help```.
 
 Stay tuned for more features.
+
+## Donations:
+Not mandatory at all, but if you're feeling generous:
+```
+ETH: 0x13318b2A795940D119b999ECfe827708131fA3f6
+LTC: LiChyn9o9VhppANUHDhe6ReFjGoGhLqtZm
+```
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XVWUDA7TZH2SU)
