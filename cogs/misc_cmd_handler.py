@@ -12,7 +12,7 @@ class MiscCommands:
     @commands.command(name="contact")
     async def contact(self):
         """
-        Shows donation options
+        Shows contact information
         An example for this command would be:
         "$donate"
         """
