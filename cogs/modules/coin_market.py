@@ -80,6 +80,8 @@ class CoinMarket:
             formatted_fiat = "{}{:,.6f}".format(fiat_currencies[ucase_fiat],
                                                 float(price))
         formatted_fiat = formatted_fiat.rstrip('0')
+        if formatted_fiat.endswith('.'):
+            formatted_fiat = formatted_fiat.replace('.', '')
         return formatted_fiat
 
     def fetch_currency_data(self, currency="", fiat="", load_all=False):
@@ -131,6 +133,8 @@ class CoinMarket:
                                                       'USD',
                                                       fiat))
             converted_price = "{:,.6f}".format(converted_price).rstrip('0')
+            if converted_price.endswith('.'):
+                converted_price = converted_price.replace('.', '')
             if fiat in fiat_suffix:
                 formatted_data += 'Price ({}): **{} {}**\n'.format(fiat,
                                                                    converted_price,
