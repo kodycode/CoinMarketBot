@@ -204,6 +204,8 @@ class CoinMarket:
             fiat = self.fiat_check(fiat)
             if currency.upper() in acronym_list:
                 currency = acronym_list[currency.upper()]
+                if "Duplicate" in currency:
+                    return currency, isPositivePercent
             data = market_list[currency]
             formatted_data, isPositivePercent = self._format_currency_data(data, fiat)
             return formatted_data, isPositivePercent
@@ -346,6 +348,8 @@ class CoinMarket:
                 try:
                     if currency.upper() in acronym_list:
                         currency = acronym_list[currency.upper()]
+                        if "Duplicate" in currency:
+                            return currency
                     data_list.append(market_list[currency])
                 except:
                     raise CurrencyException("Invalid currency: {}".format(currency))
