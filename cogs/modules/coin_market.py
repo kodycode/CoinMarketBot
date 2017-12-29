@@ -74,11 +74,12 @@ class CoinMarket:
         if fiat is not "USD":
             price = float(c.convert(float(price), "USD", fiat))
         if ucase_fiat in fiat_suffix:
-            formatted_fiat = "{:,.2f} {}".format(float(price),
+            formatted_fiat = "{:,.6f} {}".format(float(price),
                                                  fiat_currencies[ucase_fiat])
         else:
-            formatted_fiat = "{}{:,.2f}".format(fiat_currencies[ucase_fiat],
+            formatted_fiat = "{}{:,.6f}".format(fiat_currencies[ucase_fiat],
                                                 float(price))
+        formatted_fiat = formatted_fiat.rstrip('0')
         return formatted_fiat
 
     def fetch_currency_data(self, currency="", fiat="", load_all=False):
@@ -129,15 +130,15 @@ class CoinMarket:
                 converted_price = float(price.convert(float(data['price_usd']),
                                                       'USD',
                                                       fiat))
-
+            converted_price = "{:,.6f}".format(converted_price).rstrip('0')
             if fiat in fiat_suffix:
-                formatted_data += 'Price ({}): **{:,.2f} {}**\n'.format(fiat,
-                                                                        converted_price,
-                                                                        fiat_currencies[fiat])
+                formatted_data += 'Price ({}): **{} {}**\n'.format(fiat,
+                                                                   converted_price,
+                                                                   fiat_currencies[fiat])
             else:
-                formatted_data += 'Price ({}): **{}{:,.2f}**\n'.format(fiat,
-                                                                       fiat_currencies[fiat],
-                                                                       converted_price)
+                formatted_data += 'Price ({}): **{}{}**\n'.format(fiat,
+                                                                  fiat_currencies[fiat],
+                                                                  converted_price)
             formatted_data += 'Price (BTC): **{:,}**\n'.format(float(data['price_btc']))
             if (data['market_cap_usd'] is None):
                 formatted_data += 'Market Cap ({}): Unknown\n'.format(fiat)
