@@ -9,6 +9,15 @@ class MiscCommands:
     def __init__(self, bot):
         self.cmd_function = MiscFunctionality(bot)
 
+    @commands.command(name="profile")
+    async def bot(self):
+        """
+        Shows bot profile
+        An example for this command would be:
+        "$donate"
+        """
+        await self.cmd_function.display_bot_profile()
+
     @commands.command(name="contact")
     async def contact(self):
         """
@@ -34,6 +43,17 @@ class MiscFunctionality:
     """
     def __init__(self, bot):
         self.bot = bot
+
+    async def display_bot_profile(self):
+        """
+        Displays the bot profile URL
+        """
+        try:
+            msg = "https://discordbots.org/bot/353373501274456065"
+            await self.bot.say(msg)
+        except Exception as e:
+            print("An error has occured. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
 
     async def display_contact(self):
         """
