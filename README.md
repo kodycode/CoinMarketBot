@@ -1,9 +1,14 @@
+[![Discord Bots](https://discordbots.org/api/widget/lib/353373501274456065.svg?noavatar=true)](https://discordbots.org/bot/353373501274456065)
+[![Discord Bots](https://discordbots.org/api/widget/status/353373501274456065.svg?noavatar=true)](https://discordbots.org/bot/353373501274456065)
+[![Discord Bots](https://discordbots.org/api/widget/upvotes/353373501274456065.svg?noavatar=true)](https://discordbots.org/bot/353373501274456065)
 # CoinMarketDiscordBot
 A Discord bot that reports data from https://coinmarketcap.com/
 
 Created with Python 3.6 and the [CoinMarketCap API](https://github.com/mrsmn/coinmarketcap-api) wrapper.
 
 Click [here](https://discordapp.com/oauth2/authorize?&client_id=353373501274456065&scope=bot) to add the bot to your server.
+
+[![Discord Bots](https://discordbots.org/api/widget/353373501274456065.svg)](https://discordbots.org/bot/353373501274456065)
 
 ## Installation:
 1. Install necessary requirements using ```pip install -r requirements.txt```
