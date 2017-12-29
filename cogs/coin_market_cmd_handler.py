@@ -541,6 +541,9 @@ class CoinMarketFunctionality:
                     json.dump(self.config_data,
                               outfile,
                               indent=4)
+                num_channels = len(subscriber_list)
+                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
+                await self.bot.change_presence(game=game_status)
                 await self.bot.say("Channel has succcesfully subscribed.")
             else:
                 await self.bot.say("Channel is already subscribed.")
@@ -563,6 +566,9 @@ class CoinMarketFunctionality:
                     json.dump(self.config_data,
                               outfile,
                               indent=4)
+                num_channels = len(subscriber_list)
+                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
+                await self.bot.change_presence(game=game_status)
                 await self.bot.say("Channel has unsubscribed.")
             else:
                 await self.bot.say("Channel was never subscribed.")

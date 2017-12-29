@@ -1,5 +1,6 @@
 from discord.ext import commands
 from bot_logger import logger
+import discord
 import json
 import logging
 import requests
@@ -7,7 +8,8 @@ import requests
 bot = commands.Bot(command_prefix='$', description='Displays market data from https://coinmarketcap.com/')
 
 initial_extensions = [
-    'cogs.coin_market_cmd_handler'
+    'cogs.coin_market_cmd_handler',
+    'cogs.misc_cmd_handler'
 ]
 
 DISCORD_BOT_URL = "https://discordbots.org/api/bots/353373501274456065/stats"
@@ -35,18 +37,23 @@ class CoinMarketBot:
 
     @bot.event
     async def on_ready():
-        for extension in initial_extensions:
-            try:
-                logger.info('Starting bot..')
+        try:
+            subscriber_list = config_data["subscriber_list"][0]
+            num_channels = len(subscriber_list)
+            logger.info('Starting bot..')
+            for extension in initial_extensions:
                 bot.load_extension(extension)
-                print('CoinMarketDiscordBot is online.')
-                print('Bot is currently running on {} servers.'.format(len(bot.servers)))
-                update_server_count(len(bot.servers))
-                logger.info('Bot is online.')
-            except Exception as e:
-                error_msg = 'Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e)
-                print(error_msg)
-                logger.error(error_msg)
+            print('CoinMarketDiscordBot is online.')
+            logger.info('Bot is online.')
+            print('Bot is currently running on {} servers.'.format(len(bot.servers)))
+            update_server_count(len(bot.servers))
+            if len(subscriber_list) > 0:
+                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
+                await bot.change_presence(game=game_status)
+        except Exception as e:
+            error_msg = 'Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e)
+            print(error_msg)
+            logger.error(error_msg)
 
     @bot.event
     async def on_message(message):
