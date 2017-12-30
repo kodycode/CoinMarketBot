@@ -1,6 +1,7 @@
 from bot_logger import logger
 from cogs.modules.coin_market import CoinMarket, CoinMarketException, CurrencyException, FiatException, MarketStatsException
 from discord.ext import commands
+from discord.errors import Forbidden
 import asyncio
 import datetime
 import discord
@@ -318,6 +319,8 @@ class CoinMarketFunctionality:
                                        description=data,
                                        colour=0xD14836)
             await self.bot.say(embed=em)
+        except Forbidden:
+            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             await self.bot.say(e)
@@ -346,6 +349,8 @@ class CoinMarketFunctionality:
                                description=data,
                                colour=0x008000)
             await self.bot.say(embed=em)
+        except Forbidden:
+            pass
         except MarketStatsException as e:
             logger.error("MarketStatsException: {}".format(str(e)))
             await self.bot.say(e)
@@ -395,6 +400,8 @@ class CoinMarketFunctionality:
                             json.dump(self.config_data,
                                       outfile,
                                       indent=4)
+        except Forbidden:
+            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             self.live_on = False
@@ -443,6 +450,8 @@ class CoinMarketFunctionality:
                                description=result,
                                colour=0xFFD700)
             await self.bot.say(embed=em)
+        except Forbidden:
+            pass
         except Exception as e:
             await self.bot.say("Command failed. Make sure the arguments are valid.")
             print("An error has occured. See error.log.")
@@ -474,6 +483,8 @@ class CoinMarketFunctionality:
                                description=result,
                                colour=0xFFD700)
             await self.bot.say(embed=em)
+        except Forbidden:
+            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             self.live_on = False
@@ -514,6 +525,8 @@ class CoinMarketFunctionality:
                                description=result,
                                colour=0xFFD700)
             await self.bot.say(embed=em)
+        except Forbidden:
+            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             self.live_on = False
@@ -563,6 +576,8 @@ class CoinMarketFunctionality:
                                description=msg,
                                colour=color)
             await self.bot.say(embed=em)
+        except Forbidden:
+            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             self.live_on = False
@@ -635,6 +650,8 @@ class CoinMarketFunctionality:
                 await self.bot.say("Channel has unsubscribed.")
             else:
                 await self.bot.say("Channel was never subscribed.")
+        except Forbidden:
+            pass
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -685,6 +702,8 @@ class CoinMarketFunctionality:
                 else:
                     msg = "Channel does not have any currencies to display."
                 await self.bot.say(msg)
+        except Forbidden:
+            pass
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -719,6 +738,8 @@ class CoinMarketFunctionality:
                 await self.bot.say("``{}`` was successfully added.".format(currency.title()))
             else:
                 await self.bot.say("The channel needs to be subscribed first.")
+        except Forbidden:
+            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             await self.bot.say(e)
@@ -758,6 +779,8 @@ class CoinMarketFunctionality:
                     await self.bot.say("``{}`` was never added or is invalid.".format(currency.title()))
             else:
                 await self.bot.say("The channel needs to be subscribed first.")
+        except Forbidden:
+            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             await self.bot.say(e)
