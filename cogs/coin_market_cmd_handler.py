@@ -159,6 +159,17 @@ class SubscriberCommands:
         """
         await self.cmd_function.remove_subscriber(ctx)
 
+    @commands.command(name='getc', pass_context=True)
+    async def getc(self, ctx):
+        """
+        Gets the currencies the channel is currently subscribed to
+        An example for this command would be:
+        "$getc"
+
+        @param ctx - context of the command sent
+        """
+        await self.cmd_function.get_sub_currencies(ctx)
+
     @commands.command(name='addc', pass_context=True)
     async def addc(self, ctx, currency: str):
         """
@@ -656,6 +667,26 @@ class CoinMarketFunctionality:
         except Exception as e:
             await self.bot.say("Failed to set purge mode. Please make sure this"
                                " channel is within a valid server.")
+
+    async def get_sub_currencies(self, ctx):
+        """
+        Displays the currencies the channel in context is subbed too
+
+        @param ctx - context of the command sent
+        """
+        try:
+            channel = str(ctx.message.channel.id)
+            subscriber_list = self.config_data["subscriber_list"][0]
+            if channel in subscriber_list:
+                channel_settings = subscriber_list[channel][0]
+                currency_list = channel_settings["currencies"]
+                msg = "Currently this channel is subscribed to the following:\n"
+                for currency in currency_list:
+                    msg += "__**{}**__\n".format(currency.title())
+                await self.bot.say(msg)
+        except Exception as e:
+            print("An error has occured. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
 
     async def add_currency(self, ctx, currency):
         """
