@@ -293,6 +293,7 @@ class CoinMarketFunctionality:
         @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
         """
         try:
+            msg_count = 0
             if ',' in currency:
                 if ' ' in currency:
                     await self.bot.say("Don't include spaces in multi-coin search.")
@@ -302,9 +303,16 @@ class CoinMarketFunctionality:
                                                                       self.acronym_list,
                                                                       currency_list,
                                                                       fiat.upper())
-                em = discord.Embed(title="Search results",
-                                   description=data,
-                                   colour=0xFFD700)
+                for msg in data:
+                    if msg_count == 0:
+                        em = discord.Embed(title="Search results",
+                                           description=msg,
+                                           colour=0xFFD700)
+                        msg_count += 1
+                    else:
+                        em = discord.Embed(description=msg,
+                                           colour=0xFFD700)
+                    await self.bot.say(embed=em)
             else:
                 data, isPositivePercent = self.coin_market.get_current_currency(self.market_list,
                                                                                 self.acronym_list,
@@ -318,7 +326,7 @@ class CoinMarketFunctionality:
                     em = discord.Embed(title="Search results",
                                        description=data,
                                        colour=0xD14836)
-            await self.bot.say(embed=em)
+                await self.bot.say(embed=em)
         except Forbidden:
             pass
         except CurrencyException as e:
@@ -371,6 +379,7 @@ class CoinMarketFunctionality:
         try:
             remove_channels = []
             subscriber_list = self.config_data["subscriber_list"][0]
+            msg_count = 0
             for channel in subscriber_list:
                 if self.bot.get_channel(channel) is not None:
                     channel_settings = subscriber_list[channel][0]
@@ -378,18 +387,24 @@ class CoinMarketFunctionality:
                         if channel_settings["purge"] is True:
                             try:
                                 await self.bot.purge_from(self.bot.get_channel(channel),
-                                                          limit=10)
+                                                          limit=100)
                             except:
                                 pass
                         data = self.coin_market.get_current_multiple_currency(self.market_list,
                                                                               self.acronym_list,
                                                                               channel_settings["currencies"],
                                                                               channel_settings["fiat"])
-                        em = discord.Embed(title="Live Currency Update",
-                                           description=data,
-                                           colour=0xFFD700)
-                        await self.bot.send_message(self.bot.get_channel(channel),
-                                                    embed=em)
+                        for msg in data:
+                            if msg_count == 0:
+                                em = discord.Embed(title="Live Currency Update",
+                                                   description=msg,
+                                                   colour=0xFFD700)
+                                msg_count += 1
+                            else:
+                                em = discord.Embed(description=msg,
+                                                   colour=0xFFD700)
+                            await self.bot.send_message(self.bot.get_channel(channel),
+                                                        embed=em)
                 else:
                     remove_channels.append(channel)
             if remove_channels:
