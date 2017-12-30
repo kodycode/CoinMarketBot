@@ -680,9 +680,12 @@ class CoinMarketFunctionality:
             if channel in subscriber_list:
                 channel_settings = subscriber_list[channel][0]
                 currency_list = channel_settings["currencies"]
-                msg = "Currently this channel is subscribed to the following:\n"
-                for currency in currency_list:
-                    msg += "__**{}**__\n".format(currency.title())
+                if len(currency_list) != 0:
+                    msg = "Currently this channel displays the following:\n"
+                    for currency in currency_list:
+                        msg += "__**{}**__\n".format(currency.title())
+                else:
+                    msg = "Channel does not have any currencies to display."
                 await self.bot.say(msg)
         except Exception as e:
             print("An error has occured. See error.log.")
