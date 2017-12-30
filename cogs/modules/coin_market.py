@@ -119,9 +119,9 @@ class CoinMarket:
             formatted_data = ''
             hour_trend = ''
             if float(data['percent_change_1h']) >= 0:
-                hour_trend = ':arrow_upper_right:'
+                hour_trend = '<:small_green_triangle:396586561413578752>'
             else:
-                hour_trend = ':arrow_lower_right:'
+                hour_trend = ':small_red_triangle_down:'
                 isPositivePercent = False
 
             formatted_data += '__**#{}. {} ({})**__ {}\n'.format(data['rank'],
