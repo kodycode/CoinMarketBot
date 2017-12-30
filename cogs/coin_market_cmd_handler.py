@@ -367,28 +367,26 @@ class CoinMarketFunctionality:
             remove_channels = []
             subscriber_list = self.config_data["subscriber_list"][0]
             for channel in subscriber_list:
-                channel_settings = subscriber_list[channel][0]
-                if channel_settings["currencies"]:
-                    if channel_settings["purge"] is True:
-                        try:
-                            await self.bot.purge_from(self.bot.get_channel(channel),
-                                                      limit=10)
-                        except:
-                            pass
-                    data = self.coin_market.get_current_multiple_currency(self.market_list,
-                                                                          self.acronym_list,
-                                                                          channel_settings["currencies"],
-                                                                          channel_settings["fiat"])
-                    em = discord.Embed(title="Live Currency Update",
-                                       description=data,
-                                       colour=0xFFD700)
-                    try:
+                if self.bot.get_channel(channel) is not None:
+                    channel_settings = subscriber_list[channel][0]
+                    if channel_settings["currencies"]:
+                        if channel_settings["purge"] is True:
+                            try:
+                                await self.bot.purge_from(self.bot.get_channel(channel),
+                                                          limit=10)
+                            except:
+                                pass
+                        data = self.coin_market.get_current_multiple_currency(self.market_list,
+                                                                              self.acronym_list,
+                                                                              channel_settings["currencies"],
+                                                                              channel_settings["fiat"])
+                        em = discord.Embed(title="Live Currency Update",
+                                           description=data,
+                                           colour=0xFFD700)
                         await self.bot.send_message(self.bot.get_channel(channel),
                                                     embed=em)
-                    except Exception as e:
-                        remove_channels.append(channel)
-                        logger.error("Something went wrong with this channel. "
-                                     "This channel will now be removed.")
+                else:
+                    remove_channels.append(channel)
             if remove_channels:
                 for channel in remove_channels:
                     if channel in subscriber_list:
