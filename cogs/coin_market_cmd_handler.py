@@ -403,8 +403,11 @@ class CoinMarketFunctionality:
                             else:
                                 em = discord.Embed(description=msg,
                                                    colour=0xFFD700)
-                            await self.bot.send_message(self.bot.get_channel(channel),
-                                                        embed=em)
+                            try:
+                                await self.bot.send_message(self.bot.get_channel(channel),
+                                                            embed=em)
+                            except:
+                                pass
                 else:
                     remove_channels.append(channel)
             if remove_channels:
@@ -418,8 +421,6 @@ class CoinMarketFunctionality:
                 num_channels = len(subscriber_list)
                 game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
                 await self.bot.change_presence(game=game_status)
-        except Forbidden:
-            pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             self.live_on = False
