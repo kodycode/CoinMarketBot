@@ -381,7 +381,7 @@ class CoinMarketFunctionality:
             subscriber_list = self.config_data["subscriber_list"][0]
             msg_count = 0
             for channel in subscriber_list:
-                if self.bot.get_channel(channel) is not None:
+                if self.bot.get_channel(channel) in self.bot.get_all_channels():
                     channel_settings = subscriber_list[channel][0]
                     if channel_settings["currencies"]:
                         if channel_settings["purge"] is True:
@@ -411,10 +411,13 @@ class CoinMarketFunctionality:
                 for channel in remove_channels:
                     if channel in subscriber_list:
                         subscriber_list.pop(channel)
-                        with open('config.json', 'w') as outfile:
-                            json.dump(self.config_data,
-                                      outfile,
-                                      indent=4)
+                with open('config.json', 'w') as outfile:
+                    json.dump(self.config_data,
+                              outfile,
+                              indent=4)
+                num_channels = len(subscriber_list)
+                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
+                await self.bot.change_presence(game=game_status)
         except Forbidden:
             pass
         except CurrencyException as e:
