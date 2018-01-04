@@ -88,7 +88,7 @@ class CoinMarketCommands:
         """
         Displays conversion from one cryptocurrency to another
         An example for this command would be:
-        "$cc bitcoin litecoin 500"
+        "$cb bitcoin litecoin 500"
 
         @param currency1 - currency to convert from
         @param currency2 - currency to convert to
@@ -445,6 +445,8 @@ class CoinMarketFunctionality:
         @param currency_amt - amount of currency coins
         """
         try:
+            acronym1 = ''
+            acronym2 = ''
             if currency1.upper() in self.acronym_list:
                 acronym1 = currency1.upper()
                 currency1 = self.acronym_list[currency1.upper()]
