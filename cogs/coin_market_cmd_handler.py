@@ -377,7 +377,7 @@ class CoinMarketFunctionality:
         Obtains and displays live updates of coin stats in n-second intervals.
         """
         try:
-            remove_channels = []
+            # remove_channels = []
             subscriber_list = self.config_data["subscriber_list"][0]
             msg_count = 0
             for channel in subscriber_list:
@@ -408,19 +408,19 @@ class CoinMarketFunctionality:
                                                             embed=em)
                             except:
                                 pass
-                else:
-                    remove_channels.append(channel)
-            if remove_channels:
-                for channel in remove_channels:
-                    if channel in subscriber_list:
-                        subscriber_list.pop(channel)
-                with open('config.json', 'w') as outfile:
-                    json.dump(self.config_data,
-                              outfile,
-                              indent=4)
-                num_channels = len(subscriber_list)
-                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
-                await self.bot.change_presence(game=game_status)
+            #     else:
+            #         remove_channels.append(channel)
+            # if remove_channels:
+            #     for channel in remove_channels:
+            #         if channel in subscriber_list:
+            #             subscriber_list.pop(channel)
+            #     with open('config.json', 'w') as outfile:
+            #         json.dump(self.config_data,
+            #                   outfile,
+            #                   indent=4)
+            #     num_channels = len(subscriber_list)
+            #     game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
+            #     await self.bot.change_presence(game=game_status)
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             self.live_on = False
