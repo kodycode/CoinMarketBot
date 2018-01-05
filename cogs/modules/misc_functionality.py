@@ -46,8 +46,8 @@ class MiscFunctionality:
                 subscriber_list = config_data["subscriber_list"][0]
             em = discord.Embed(colour=0xFFFFFF)
             em.set_author(name=self.bot.user,
-                          icon_url=self.bot.user.default_avatar_url)
-            em.set_thumbnail(url=self.bot.user.default_avatar_url)
+                          icon_url=self.bot.user.avatar_url)
+            em.set_thumbnail(url=self.bot.user.avatar_url)
             em.add_field(name="Author",
                          value=str(username),
                          inline=False)
