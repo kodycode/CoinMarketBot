@@ -1073,10 +1073,11 @@ class CommandFunctionality:
                 if len(alert_list) != 0:
                     msg[0] = "The following alerts have been set:\n"
                     for alert in alert_list:
+                        currency = alert_list[alert]["currency"].title()
                         operation = self._translate_operation_(alert_list[alert]["operation"])
                         msg[int(alert)] = ("[**{}**] Alert when **{}** is **{}** **{}** "
                                            "in **{}**\n".format(alert,
-                                                                alert_list[alert]["currency"],
+                                                                currency,
                                                                 operation,
                                                                 alert_list[alert]["price"],
                                                                 alert_list[alert]["fiat"]))

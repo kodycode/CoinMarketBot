@@ -1,9 +1,10 @@
 {
     "token": "Enter your Discord token here",
     "load_acronyms": true,
+    "alert_capacity": 10,
     "subscriber_list": [
         {
-            
+
         }
     ]
 }
