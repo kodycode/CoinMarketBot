@@ -250,6 +250,7 @@ class CommandFunctionality:
                                                             embed=em)
                             except:
                                 pass
+                        msg_count = 0
             #     else:
             #         remove_channels.append(channel)
             # if remove_channels:
