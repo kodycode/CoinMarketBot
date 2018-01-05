@@ -570,7 +570,8 @@ class CommandFunctionality:
                     msg = "Channel does not have any currencies to display."
                     await self.bot.say(msg)
             else:
-                await self.bot.say("Channel was never subscribed.")
+                msg = "Channel was never subscribed."
+            await self.bot.say(msg)
         except Forbidden:
             pass
         except Exception as e:
