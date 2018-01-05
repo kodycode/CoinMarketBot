@@ -71,7 +71,7 @@ class CommandFunctionality:
             time = datetime.datetime.now()
             if time.minute % 5 == 0:
                 yield from self._update_data()
-            yield from asyncio.sleep(60)
+            yield from asyncio.sleep(20)
 
     def _update_market(self):
         """
