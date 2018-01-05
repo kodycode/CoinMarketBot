@@ -21,6 +21,7 @@ class CommandFunctionality:
         self.market_stats = None
         self.coin_market = CoinMarket()
         self.live_on = False
+        asyncio.async(self._update_game_status_())
         asyncio.async(self._continuous_updates())
 
     def _check_subscriber_file(self):
@@ -56,6 +57,16 @@ class CommandFunctionality:
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
+
+    @asyncio.coroutine
+    def _update_game_status_(self):
+        """
+        Updates the game status of the bot
+        """
+        num_channels = len(self.subscriber_data)
+        game_status = discord.Game(name="with {} subscriber(s)"
+                                        "".format(num_channels))
+        yield from self.bot.change_presence(game=game_status)
 
     @asyncio.coroutine
     def _update_data(self):
@@ -493,9 +504,7 @@ class CommandFunctionality:
                 channel_settings["fiat"] = ucase_fiat
                 channel_settings["currencies"] = []
                 self._save_subscriber_file()
-                num_channels = len(subscriber_list)
-                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
-                await self.bot.change_presence(game=game_status)
+                await self._update_game_status_()
                 await self.bot.say("Channel has succcesfully subscribed. Now "
                                    "add some currencies with `$addc` to begin "
                                    "receiving updates.")
@@ -517,9 +526,7 @@ class CommandFunctionality:
             if channel in subscriber_list:
                 subscriber_list.pop(channel)
                 self._save_subscriber_file()
-                num_channels = len(subscriber_list)
-                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
-                await self.bot.change_presence(game=game_status)
+                await self._update_game_status_()
                 await self.bot.say("Channel has unsubscribed.")
             else:
                 await self.bot.say("Channel was never subscribed.")

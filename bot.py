@@ -1,6 +1,5 @@
 from discord.ext import commands
 from bot_logger import logger
-import discord
 import json
 import logging
 import requests
@@ -37,8 +36,6 @@ class CoinMarketBot:
     @bot.event
     async def on_ready():
         try:
-            subscriber_list = config_data["subscriber_list"][0]
-            num_channels = len(subscriber_list)
             logger.info('Starting bot..')
             for extension in initial_extensions:
                 bot.load_extension(extension)
@@ -46,9 +43,6 @@ class CoinMarketBot:
             logger.info('Bot is online.')
             print('Bot is currently running on {} servers.'.format(len(bot.servers)))
             update_server_count(len(bot.servers))
-            if len(subscriber_list) > 0:
-                game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
-                await bot.change_presence(game=game_status)
         except Exception as e:
             error_msg = 'Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e)
             print(error_msg)
