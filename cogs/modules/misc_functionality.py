@@ -57,9 +57,6 @@ class MiscFunctionality:
             em.add_field(name="Subscribers",
                          value=str(len(subscriber_list)),
                          inline=False)
-            em.add_field(name="Source",
-                         value=str(len(subscriber_list)),
-                         inline=False)
             em.set_footer(text="Created with discord.py",
                           icon_url="https://www.python.org/static/opengraph-icon-200x200.png")
             await self.bot.say(embed=em)

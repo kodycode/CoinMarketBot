@@ -8,11 +8,11 @@ class MiscCommands:
         self.cmd_function = cmd_function
 
     @commands.command(name="profile")
-    async def bot(self):
+    async def profile(self):
         """
         Shows bot profile
         An example for this command would be:
-        "$donate"
+        "$profile"
         """
         await self.cmd_function.display_bot_profile()
 
@@ -28,8 +28,8 @@ class MiscCommands:
     @commands.command(name="info")
     async def info(self):
         """
-        Shows donation options
+        Shows information about the bot
         An example for this command would be:
-        "$donate"
+        "$info"
         """
         await self.cmd_function.display_info()
