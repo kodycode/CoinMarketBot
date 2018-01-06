@@ -14,8 +14,12 @@ class CommandFunctionality:
 
     def __init__(self, bot):
         self.supported_operators = ["<", ">", "<=", ">="]
-        self.subscriber_data = self._check_subscriber_file()
-        self.alert_data = self._check_alert_file()
+        with open('config.json') as config:
+            self.config_data = json.load(config)
+        self.subscriber_data = self._check_subscriber_file_()
+        self._save_subscriber_file_(self.subscriber_data, backup=True)
+        self.alert_data = self._check_alert_file_()
+        self._save_alert_file_(self.alert_data, backup=True)
         self.bot = bot
         self.market_list = None
         self.market_stats = None
@@ -24,7 +28,7 @@ class CommandFunctionality:
         asyncio.async(self._update_game_status_())
         asyncio.async(self._continuous_updates())
 
-    def _check_subscriber_file(self):
+    def _check_subscriber_file_(self):
         """
         Checks to see if there's a valid subscribers.json file
         """
@@ -32,16 +36,13 @@ class CommandFunctionality:
             with open('subscribers.json') as subscribers:
                 return json.load(subscribers)
         except FileNotFoundError:
-            with open('subscribers.json', 'w') as outfile:
-                json.dump({},
-                          outfile,
-                          indent=4)
-                return json.loads('{}')
+            self._save_subscriber_file_()
+            return json.loads('{}')
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _check_alert_file(self):
+    def _check_alert_file_(self):
         """
         Checks to see if there's a valid alerts.json file
         """
@@ -49,11 +50,8 @@ class CommandFunctionality:
             with open('alerts.json') as alerts:
                 return json.load(alerts)
         except FileNotFoundError:
-            with open('alerts.json', 'w') as outfile:
-                json.dump({},
-                          outfile,
-                          indent=4)
-                return json.loads('{}')
+            self._save_alert_file_()
+            return json.loads('{}')
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -470,12 +468,16 @@ class CommandFunctionality:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _save_subscriber_file(self):
+    def _save_subscriber_file_(self, subscriber_data={}, backup=False):
         """
         Saves subscribers.json file
         """
-        with open('subscribers.json', 'w') as outfile:
-            json.dump(self.subscriber_data,
+        if backup:
+            subscriber_filename = "subscribers_backup.json"
+        else:
+            subscriber_filename = "subscribers.json"
+        with open(subscriber_filename, 'w') as outfile:
+            json.dump(subscriber_data,
                       outfile,
                       indent=4)
 
@@ -503,7 +505,7 @@ class CommandFunctionality:
                 channel_settings["purge"] = False
                 channel_settings["fiat"] = ucase_fiat
                 channel_settings["currencies"] = []
-                self._save_subscriber_file()
+                self._save_subscriber_file_(self.subscriber_data)
                 await self._update_game_status_()
                 await self.bot.say("Channel has succcesfully subscribed. Now "
                                    "add some currencies with `$addc` to begin "
@@ -525,7 +527,7 @@ class CommandFunctionality:
             subscriber_list = self.subscriber_data
             if channel in subscriber_list:
                 subscriber_list.pop(channel)
-                self._save_subscriber_file()
+                self._save_subscriber_file_(self.subscriber_data)
                 await self._update_game_status_()
                 await self.bot.say("Channel has unsubscribed.")
             else:
@@ -549,7 +551,7 @@ class CommandFunctionality:
                 return
             channel_settings = subscriber_list[channel]
             channel_settings["purge"] = not channel_settings["purge"]
-            self._save_subscriber_file()
+            self._save_subscriber_file_(self.subscriber_data)
             if channel_settings["purge"]:
                 await self.bot.say("Purge mode on. Bot will now purge messages upon"
                                    " live updates. Please make sure your bot has "
@@ -611,7 +613,7 @@ class CommandFunctionality:
                     await self.bot.say("``{}`` is already added.".format(currency.title()))
                     return
                 channel_settings["currencies"].append(currency)
-                self._save_subscriber_file()
+                self._save_subscriber_file_(self.subscriber_data)
                 await self.bot.say("``{}`` was successfully added.".format(currency.title()))
             else:
                 await self.bot.say("The channel needs to be subscribed first.")
@@ -646,7 +648,7 @@ class CommandFunctionality:
                 channel_settings = subscriber_list[channel]
                 if currency in channel_settings["currencies"]:
                     channel_settings["currencies"].remove(currency)
-                    self._save_subscriber_file()
+                    self._save_subscriber_file_(self.subscriber_data)
                     await self.bot.say("``{}`` was successfully removed.".format(currency.title()))
                     return
                 else:
@@ -751,7 +753,7 @@ class CommandFunctionality:
                 i += 1
             if alert_num is None:
                 raise Exception("Something went wrong with adding alert.")
-            alert_cap = int(self.subscriber_data["alert_capacity"])
+            alert_cap = int(self.config_data["alert_capacity"])
             if int(alert_num) > alert_cap:
                 await self.bot.say("Unable to add alert, user alert capacity of"
                                    " **{}** has been reached.".format(alert_cap))
@@ -771,10 +773,7 @@ class CommandFunctionality:
             if channel_alert["price"].endswith('.'):
                 channel_alert["price"] = channel_alert["price"].replace('.', '')
             channel_alert["fiat"] = ucase_fiat
-            with open('alerts.json', 'w') as outfile:
-                json.dump(self.alert_data,
-                          outfile,
-                          indent=4)
+            self._save_alert_file_(self.alert_data)
             await self.bot.say("Alert has been set.")
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
@@ -787,12 +786,16 @@ class CommandFunctionality:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _save_alert_file_(self):
+    def _save_alert_file_(self, alert_data={}, backup=False):
         """
         Saves alerts.json file
         """
-        with open('alerts.json', 'w') as outfile:
-            json.dump(self.alert_data,
+        if backup:
+            alert_filename = "alerts_backup.json"
+        else:
+            alert_filename = "alerts.json"
+        with open(alert_filename, 'w') as outfile:
+            json.dump(alert_data,
                       outfile,
                       indent=4)
 
@@ -815,7 +818,7 @@ class CommandFunctionality:
                 alert_price = alert_setting["price"]
                 alert_fiat = alert_setting["fiat"]
                 alert_list.pop(str(alert_num))
-                self._save_alert_file_()
+                self._save_alert_file_(self.alert_data)
                 await self.bot.say("Alert **{}** where **{}** is **{}** **{}** "
                                    "in **{}** was successfully "
                                    "removed.".format(removed_alert,
@@ -908,7 +911,7 @@ class CommandFunctionality:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
                         self.alert_data[user].pop(str(alert_num))
-                self._save_alert_file_()
+                self._save_alert_file_(self.alert_data)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
