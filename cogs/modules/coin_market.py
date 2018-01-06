@@ -108,13 +108,14 @@ class CoinMarket:
                                     "if this currency is valid and also check "
                                     "for spelling errors.".format(currency))
 
-    def _format_currency_data(self, data, fiat):
+    def _format_currency_data(self, data, fiat, single_search=True):
         """
         Formats the data fetched
 
         @param currency - the cryptocurrency to search for (i.e. 'bitcoin',
                           'ethereum')
         @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
+        @param single_search - separate more lines if True
         @return - formatted currency data
         """
         try:
@@ -145,9 +146,11 @@ class CoinMarket:
                                                                    fiat_currencies[fiat])
             else:
                 formatted_data += 'Price ({}): **{}{}**\n'.format(fiat,
-                                                                    fiat_currencies[fiat],
-                                                                    converted_price)
-            formatted_data += 'Price (BTC): **{:,}**\n\n'.format(float(data['price_btc']))
+                                                                  fiat_currencies[fiat],
+                                                                  converted_price)
+            formatted_data += 'Price (BTC): **{:,}**\n'.format(float(data['price_btc']))
+            if single_search:
+                formatted_data += '\n'
             if (data['market_cap_usd'] is None):
                 formatted_data += 'Market Cap ({}): Unknown\n'.format(fiat)
             else:
@@ -157,13 +160,16 @@ class CoinMarket:
                 formatted_data += 'Market Cap ({}): **${:,}**\n'.format(fiat,
                                                                         converted_price)
             if (data['available_supply'] is None):
-                formatted_data += 'Available Supply: Unknown\n\n'
+                formatted_data += 'Available Supply: Unknown\n'
             else:
-                formatted_data += 'Available Supply: **{:,}**\n\n'.format(float(data['available_supply']))
+                formatted_data += 'Available Supply: **{:,}**\n'.format(float(data['available_supply']))
+            if single_search:
+                formatted_data += '\n'
             formatted_data += 'Percent Change (1H): **{}%**\n'.format(data['percent_change_1h'])
             formatted_data += 'Percent Change (24H): **{}%**\n'.format(data['percent_change_24h'])
-            formatted_data += 'Percent Change (7D): **{}%**\n\n'.format(data['percent_change_7d'])
-
+            formatted_data += 'Percent Change (7D): **{}%**\n'.format(data['percent_change_7d'])
+            if single_search:
+                formatted_data += '\n'
             return formatted_data, isPositivePercent
         except Exception as e:
             raise CoinMarketException("Failed to format data: {}".format(e))
@@ -331,7 +337,7 @@ class CoinMarket:
                     data_list.append(self.fetch_currency_data(currency, fiat)[0])
             data_list.sort(key=lambda x: int(x['rank']))
             for data in data_list:
-                formatted_data += self._format_currency_data(data, fiat)[0] + '\n'
+                formatted_data += self._format_currency_data(data, fiat, False)[0] + '\n'
             return formatted_data
         except CurrencyException as e:
             raise
@@ -367,7 +373,7 @@ class CoinMarket:
                     raise CurrencyException("Invalid currency: `{}`".format(currency))
             data_list.sort(key=lambda x: int(x['rank']))
             for data in data_list:
-                formatted_msg = self._format_currency_data(data, fiat)[0]
+                formatted_msg = self._format_currency_data(data, fiat, False)[0]
                 if len(result_msg + formatted_msg) < 2000:
                     result_msg += formatted_msg + '\n'
                 else:
