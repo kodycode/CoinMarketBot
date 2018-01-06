@@ -106,7 +106,8 @@ class CoinMarket:
         except Exception as e:
             raise CurrencyException("Failed to find currency: `{}`. Check "
                                     "if this currency is valid and also check "
-                                    "for spelling errors.".format(currency))
+                                    "for spelling errors: {}".format(currency,
+                                                                     str(e)))
 
     def _format_currency_data(self, data, fiat, single_search=True):
         """
