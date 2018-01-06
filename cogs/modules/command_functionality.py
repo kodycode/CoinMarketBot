@@ -61,10 +61,14 @@ class CommandFunctionality:
         """
         Updates the game status of the bot
         """
-        num_channels = len(self.subscriber_data)
-        game_status = discord.Game(name="with {} subscriber(s)"
-                                        "".format(num_channels))
-        yield from self.bot.change_presence(game=game_status)
+        try:
+            num_channels = len(self.subscriber_data)
+            game_status = discord.Game(name="with {} subscriber(s)"
+                                            "".format(num_channels))
+            yield from self.bot.change_presence(game=game_status)
+        except Exception as e:
+            print("Failed to update game status. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
 
     @asyncio.coroutine
     def _update_data(self):
@@ -72,17 +76,22 @@ class CommandFunctionality:
         self.acronym_list = self._load_acronyms()
         yield from self._display_live_data()
         yield from self._alert_user_()
+        logger.info("Bot updated.")
 
     @asyncio.coroutine
     def _continuous_updates(self):
-        yield from self._update_data()
-        while True:
-            time = datetime.datetime.now()
-            if time.minute % 5 == 0:
-                yield from self._update_data()
-                yield from asyncio.sleep(60)
-            else:
-                yield from asyncio.sleep(20)
+        try:
+            yield from self._update_data()
+            while True:
+                time = datetime.datetime.now()
+                if time.minute % 5 == 0:
+                    yield from self._update_data()
+                    yield from asyncio.sleep(60)
+                else:
+                    yield from asyncio.sleep(20)
+        except Exception as e:
+            print("Failed to update bot. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
 
     def _update_market(self):
         """
@@ -97,8 +106,8 @@ class CommandFunctionality:
             for currency in currency_data:
                 market_dict[currency['id']] = currency
             self.market_list = market_dict
-        except CurrencyException as e:
-            print("An error has occured. See error.log.")
+        except Exception as e:
+            print("Failed to update market. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
     def _load_acronyms(self):
