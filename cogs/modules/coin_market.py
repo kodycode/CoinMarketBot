@@ -140,22 +140,22 @@ class CoinMarket:
             if converted_price.endswith('.'):
                 converted_price = converted_price.replace('.', '')
             if fiat in fiat_suffix:
-                formatted_data += 'Price ({}): **{} {}**\n\n'.format(fiat,
-                                                                     converted_price,
-                                                                     fiat_currencies[fiat])
+                formatted_data += 'Price ({}): **{} {}**\n'.format(fiat,
+                                                                   converted_price,
+                                                                   fiat_currencies[fiat])
             else:
-                formatted_data += 'Price ({}): **{}{}**\n\n'.format(fiat,
+                formatted_data += 'Price ({}): **{}{}**\n'.format(fiat,
                                                                     fiat_currencies[fiat],
                                                                     converted_price)
             formatted_data += 'Price (BTC): **{:,}**\n\n'.format(float(data['price_btc']))
             if (data['market_cap_usd'] is None):
-                formatted_data += 'Market Cap ({}): Unknown\n\n'.format(fiat)
+                formatted_data += 'Market Cap ({}): Unknown\n'.format(fiat)
             else:
                 converted_price = float(price.convert(float(data['market_cap_usd']),
                                                       'USD',
                                                       fiat))
-                formatted_data += 'Market Cap ({}): **${:,}**\n\n'.format(fiat,
-                                                                          converted_price)
+                formatted_data += 'Market Cap ({}): **${:,}**\n'.format(fiat,
+                                                                        converted_price)
             if (data['available_supply'] is None):
                 formatted_data += 'Available Supply: Unknown\n\n'
             else:
