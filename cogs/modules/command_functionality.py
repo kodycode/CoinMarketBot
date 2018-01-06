@@ -72,26 +72,26 @@ class CommandFunctionality:
 
     @asyncio.coroutine
     def _update_data(self):
-        self._update_market()
-        self.acronym_list = self._load_acronyms()
-        yield from self._display_live_data()
-        yield from self._alert_user_()
-        logger.info("Bot updated.")
+        try:
+            self._update_market()
+            self.acronym_list = self._load_acronyms()
+            yield from self._display_live_data()
+            yield from self._alert_user_()
+            logger.info("Bot updated.")
+        except Exception as e:
+            print("Failed to update data. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
 
     @asyncio.coroutine
     def _continuous_updates(self):
-        try:
-            yield from self._update_data()
-            while True:
-                time = datetime.datetime.now()
-                if time.minute % 5 == 0:
-                    yield from self._update_data()
-                    yield from asyncio.sleep(60)
-                else:
-                    yield from asyncio.sleep(20)
-        except Exception as e:
-            print("Failed to update bot. See error.log.")
-            logger.error("Exception: {}".format(str(e)))
+        yield from self._update_data()
+        while True:
+            time = datetime.datetime.now()
+            if time.minute % 5 == 0:
+                yield from self._update_data()
+                yield from asyncio.sleep(60)
+            else:
+                yield from asyncio.sleep(20)
 
     def _update_market(self):
         """

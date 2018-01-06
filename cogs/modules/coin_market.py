@@ -162,7 +162,7 @@ class CoinMarket:
                 formatted_data += 'Available Supply: **{:,}**\n\n'.format(float(data['available_supply']))
             formatted_data += 'Percent Change (1H): **{}%**\n'.format(data['percent_change_1h'])
             formatted_data += 'Percent Change (24H): **{}%**\n'.format(data['percent_change_24h'])
-            formatted_data += 'Percent Change (7D): **{}%**\n'.format(data['percent_change_7d'])
+            formatted_data += 'Percent Change (7D): **{}%**\n\n'.format(data['percent_change_7d'])
 
             return formatted_data, isPositivePercent
         except Exception as e:
