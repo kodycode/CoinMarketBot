@@ -4,15 +4,13 @@ import json
 import logging
 import requests
 
-bot = commands.Bot(command_prefix='$', description='Displays market data from https://coinmarketcap.com/')
-
-initial_extensions = [
-    'cogs.cog_manager'
-]
-
 DISCORD_BOT_URL = "https://discordbots.org/api/bots/353373501274456065/stats"
+COG_MANAGER = "cogs.cog_manager"
 with open('config.json') as config:
     config_data = json.load(config)
+bot = commands.Bot(command_prefix="$",
+                   description="Displays market data from "
+                               "https://coinmarketcap.com/")
 
 
 class CoinMarketBotException(Exception):
@@ -37,12 +35,11 @@ class CoinMarketBot:
     async def on_ready():
         try:
             logger.info('Starting bot..')
-            for extension in initial_extensions:
-                bot.load_extension(extension)
+            bot.load_extension(COG_MANAGER)
             print('Bot is currently running on {} servers.'.format(len(bot.servers)))
             update_server_count(len(bot.servers))
         except Exception as e:
-            error_msg = 'Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e)
+            error_msg = 'Failed to load cog manager\n{}: {}'.format(type(e).__name__, e)
             print(error_msg)
             logger.error(error_msg)
 
