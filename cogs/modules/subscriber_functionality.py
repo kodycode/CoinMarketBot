@@ -16,7 +16,7 @@ class SubscriberFunctionality:
         self.acronym_list = ""
         self.subscriber_data = self._check_subscriber_file()
         self._save_subscriber_file(self.subscriber_data, backup=True)
-        asyncio.async(self._update_game_status())
+        asyncio.ensure_future(self._update_game_status())
 
     def update(self, market_list, acronym_list):
         """
@@ -63,8 +63,7 @@ class SubscriberFunctionality:
         except:
             pass
 
-    @asyncio.coroutine
-    def _update_game_status(self):
+    async def _update_game_status(self):
         """
         Updates the game status of the bot
         """
@@ -72,7 +71,7 @@ class SubscriberFunctionality:
             num_channels = len(self.subscriber_data)
             game_status = discord.Game(name="with {} subscriber(s)"
                                             "".format(num_channels))
-            yield from self.bot.change_presence(game=game_status)
+            await self.bot.change_presence(game=game_status)
         except Exception as e:
             print("Failed to update game status. See error.log.")
             logger.error("Exception: {}".format(str(e)))
