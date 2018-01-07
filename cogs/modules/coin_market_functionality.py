@@ -22,6 +22,17 @@ class CoinMarketFunctionality:
         self.acronym_list = acronym_list
         self.market_stats = market_stats
 
+    async def _say_error_(self, e):
+        """
+        Bot will check and say the error if given correct permissions
+
+        @param e - error object
+        """
+        try:
+            await self.bot.say(e)
+        except:
+            pass
+
     async def display_search(self, currency, fiat):
         """
         Embeds search results and displays it in chat.
@@ -68,7 +79,7 @@ class CoinMarketFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except FiatException as e:
             error_msg = (str(e) +
                          "\nIf you're doing multiple searches, please "
@@ -98,10 +109,10 @@ class CoinMarketFunctionality:
             pass
         except MarketStatsException as e:
             logger.error("MarketStatsException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except CoinMarketException as e:
             print("An error has occured. See error.log.")
             logger.error("CoinMarketException: {}".format(str(e)))
@@ -185,10 +196,10 @@ class CoinMarketFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except Exception as e:
             await self.bot.say("Command failed. Make sure the arguments are valid.")
             print("An error has occured. See error.log.")
@@ -225,10 +236,10 @@ class CoinMarketFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except Exception as e:
             await self.bot.say("Command failed. Make sure the arguments are valid.")
             print("An error has occured. See error.log.")
@@ -274,10 +285,10 @@ class CoinMarketFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except Exception as e:
             await self.bot.say("Command failed. Make sure the arguments are valid.")
             print("An error has occured. See error.log.")

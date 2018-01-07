@@ -52,6 +52,17 @@ class SubscriberFunctionality:
                       outfile,
                       indent=4)
 
+    async def _say_error_(self, e):
+        """
+        Bot will check and say the error if given correct permissions
+
+        @param e - error object
+        """
+        try:
+            await self.bot.say(e)
+        except:
+            pass
+
     @asyncio.coroutine
     def _update_game_status_(self):
         """
@@ -104,7 +115,7 @@ class SubscriberFunctionality:
                         msg_count = 0
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
             await self.bot.say(e)
@@ -255,7 +266,7 @@ class SubscriberFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except CoinMarketException as e:
             print("An error has occured. See error.log.")
             logger.error("CoinMarketException: {}".format(str(e)))
@@ -293,7 +304,7 @@ class SubscriberFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))

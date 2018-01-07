@@ -90,6 +90,17 @@ class AlertFunctionality:
         else:
             raise Exception
 
+    async def _say_error_(self, e):
+        """
+        Bot will check and say the error if given correct permissions
+
+        @param e - error object
+        """
+        try:
+            await self.bot.say(e)
+        except:
+            pass
+
     async def add_alert(self, ctx, currency, operator, price, fiat):
         """
         Adds an alert to alerts.json
@@ -152,10 +163,10 @@ class AlertFunctionality:
             await self.bot.say("Alert has been set.")
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -208,7 +219,7 @@ class AlertFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -248,7 +259,7 @@ class AlertFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_error_(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
