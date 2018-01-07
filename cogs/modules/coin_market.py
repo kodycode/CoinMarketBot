@@ -72,8 +72,7 @@ class CoinMarket:
         """
         c = CurrencyConverter()
         ucase_fiat = fiat.upper()
-        if fiat is not "USD":
-            price = float(c.convert(float(price), "USD", fiat))
+        price = float(c.convert(float(price), "USD", fiat))
         if symbol:
             if ucase_fiat in fiat_suffix:
                 formatted_fiat = "{:,.6f} {}".format(float(price),
@@ -124,20 +123,20 @@ class CoinMarket:
             isPositivePercent = True
             formatted_data = ''
             hour_trend = ''
-            if float(data['percent_change_24h']) >= 0:
-                hour_trend = '<:small_green_triangle:396586561413578752>'
-            else:
-                hour_trend = ':small_red_triangle_down:'
-                isPositivePercent = False
+            if data['percent_change_24h'] is not None:
+                if float(data['percent_change_24h']) >= 0:
+                    hour_trend = '<:small_green_triangle:396586561413578752>'
+                else:
+                    hour_trend = ':small_red_triangle_down:'
+                    isPositivePercent = False
 
             formatted_data += '__**#{}. {} ({})**__ {}\n'.format(data['rank'],
                                                                  data['name'],
                                                                  data['symbol'],
                                                                  hour_trend)
-            if fiat is not "USD":
-                converted_price = float(price.convert(float(data['price_usd']),
-                                                      'USD',
-                                                      fiat))
+            converted_price = float(price.convert(float(data['price_usd']),
+                                                  'USD',
+                                                  fiat))
             converted_price = "{:,.6f}".format(converted_price).rstrip('0')
             if converted_price.endswith('.'):
                 converted_price = converted_price.replace('.', '')
@@ -259,8 +258,7 @@ class CoinMarket:
             if (stats['total_market_cap_usd'] is None):
                 formatted_stats += "Total Market Cap (USD): Unknown"
             else:
-                if fiat is not "USD":
-                    converted_price = c.convert(float(stats['total_market_cap_usd']), 'USD', fiat)
+                converted_price = c.convert(float(stats['total_market_cap_usd']), 'USD', fiat)
                 if fiat in fiat_suffix:
                     formatted_stats += "Total Market Cap ({}): **{:,} {}**\n".format(fiat,
                                                                                      converted_price,
