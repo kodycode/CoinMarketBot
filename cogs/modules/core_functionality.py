@@ -39,7 +39,6 @@ class CoreFunctionality:
             self.subscriber.update(self.market_list, self.acronym_list)
             yield from self.subscriber.display_live_data()
             yield from self.alert._alert_user_()
-            logger.info("Bot updated.")
         except Exception as e:
             print("Failed to update data. See error.log.")
             logger.error("Exception: {}".format(str(e)))

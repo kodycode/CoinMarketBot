@@ -71,7 +71,6 @@ class SubscriberFunctionality:
         Obtains and displays live updates of coin stats in n-second intervals.
         """
         try:
-            # remove_channels = []
             subscriber_list = self.subscriber_data
             msg_count = 0
             for channel in subscriber_list:
@@ -103,19 +102,6 @@ class SubscriberFunctionality:
                             except:
                                 pass
                         msg_count = 0
-            #     else:
-            #         remove_channels.append(channel)
-            # if remove_channels:
-            #     for channel in remove_channels:
-            #         if channel in subscriber_list:
-            #             subscriber_list.pop(channel)
-            #     with open('subscribers.json', 'w') as outfile:
-            #         json.dump(self.subscriber_data,
-            #                   outfile,
-            #                   indent=4)
-            #     num_channels = len(subscriber_list)
-            #     game_status = discord.Game(name="with {} subscriber(s)".format(num_channels))
-            #     await self.bot.change_presence(game=game_status)
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             await self.bot.say(e)
