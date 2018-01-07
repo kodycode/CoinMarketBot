@@ -25,38 +25,36 @@ class CoreFunctionality:
                                         self.coin_market,
                                         self.config_data["alert_capacity"])
         self.subscriber = SubscriberFunctionality(bot, self.coin_market)
-        asyncio.async(self._continuous_updates_())
+        asyncio.ensure_future(self._continuous_updates())
 
-    @asyncio.coroutine
-    def _update_data_(self):
+    async def _update_data(self):
         try:
-            self._update_market_()
-            self.acronym_list = self._load_acronyms_()
+            self._update_market()
+            self._load_acronyms()
             self.cmc.update(self.market_list,
                             self.acronym_list,
                             self.market_stats)
             self.alert.update(self.market_list, self.acronym_list)
             self.subscriber.update(self.market_list, self.acronym_list)
-            yield from self.subscriber.display_live_data()
-            yield from self.alert._alert_user_()
+            await self.subscriber.display_live_data()
+            await self.alert._alert_user()
         except Exception as e:
             print("Failed to update data. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    @asyncio.coroutine
-    def _continuous_updates_(self):
-        yield from self._update_data_()
+    async def _continuous_updates(self):
+        await self._update_data()
         print('CoinMarketDiscordBot is online.')
         logger.info('Bot is online.')
         while True:
             time = datetime.datetime.now()
             if time.minute % 5 == 0:
-                yield from self._update_data_()
-                yield from asyncio.sleep(60)
+                await self._update_data()
+                await asyncio.sleep(60)
             else:
-                yield from asyncio.sleep(20)
+                await asyncio.sleep(20)
 
-    def _update_market_(self):
+    def _update_market(self):
         """
         Loads all the cryptocurrencies that exist in the market
 
@@ -73,7 +71,7 @@ class CoreFunctionality:
             print("Failed to update market. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _load_acronyms_(self):
+    def _load_acronyms(self):
         """
         Loads all acronyms of existing crypto-coins out there
 
@@ -103,7 +101,7 @@ class CoreFunctionality:
                                                                        currency))
                 else:
                     acronym_list[data['symbol']] = currency
-            return acronym_list
+            self.acronym_list = acronym_list
         except Exception as e:
             print("Failed to load cryptocurrency acronyms. See error.log.")
             logger.error("Exception: {}".format(str(e)))

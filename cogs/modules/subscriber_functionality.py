@@ -14,9 +14,9 @@ class SubscriberFunctionality:
         self.coin_market = coin_market
         self.market_list = ""
         self.acronym_list = ""
-        self.subscriber_data = self._check_subscriber_file_()
-        self._save_subscriber_file_(self.subscriber_data, backup=True)
-        asyncio.async(self._update_game_status_())
+        self.subscriber_data = self._check_subscriber_file()
+        self._save_subscriber_file(self.subscriber_data, backup=True)
+        asyncio.async(self._update_game_status())
 
     def update(self, market_list, acronym_list):
         """
@@ -25,7 +25,7 @@ class SubscriberFunctionality:
         self.market_list = market_list
         self.acronym_list = acronym_list
 
-    def _check_subscriber_file_(self):
+    def _check_subscriber_file(self):
         """
         Checks to see if there's a valid subscribers.json file
         """
@@ -33,13 +33,13 @@ class SubscriberFunctionality:
             with open('subscribers.json') as subscribers:
                 return json.load(subscribers)
         except FileNotFoundError:
-            self._save_subscriber_file_()
+            self._save_subscriber_file()
             return json.loads('{}')
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _save_subscriber_file_(self, subscriber_data={}, backup=False):
+    def _save_subscriber_file(self, subscriber_data={}, backup=False):
         """
         Saves subscribers.json file
         """
@@ -52,7 +52,7 @@ class SubscriberFunctionality:
                       outfile,
                       indent=4)
 
-    async def _say_error_(self, e):
+    async def _say_error(self, e):
         """
         Bot will check and say the error if given correct permissions
 
@@ -64,7 +64,7 @@ class SubscriberFunctionality:
             pass
 
     @asyncio.coroutine
-    def _update_game_status_(self):
+    def _update_game_status(self):
         """
         Updates the game status of the bot
         """
@@ -115,7 +115,7 @@ class SubscriberFunctionality:
                         msg_count = 0
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error_(e)
+            await self._say_error(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
             await self.bot.say(e)
@@ -150,8 +150,8 @@ class SubscriberFunctionality:
                 channel_settings["purge"] = False
                 channel_settings["fiat"] = ucase_fiat
                 channel_settings["currencies"] = []
-                self._save_subscriber_file_(self.subscriber_data)
-                await self._update_game_status_()
+                self._save_subscriber_file(self.subscriber_data)
+                await self._update_game_status()
                 await self.bot.say("Channel has succcesfully subscribed. Now "
                                    "add some currencies with `$addc` to begin "
                                    "receiving updates.")
@@ -172,8 +172,8 @@ class SubscriberFunctionality:
             subscriber_list = self.subscriber_data
             if channel in subscriber_list:
                 subscriber_list.pop(channel)
-                self._save_subscriber_file_(self.subscriber_data)
-                await self._update_game_status_()
+                self._save_subscriber_file(self.subscriber_data)
+                await self._update_game_status()
                 await self.bot.say("Channel has unsubscribed.")
             else:
                 await self.bot.say("Channel was never subscribed.")
@@ -196,7 +196,7 @@ class SubscriberFunctionality:
                 return
             channel_settings = subscriber_list[channel]
             channel_settings["purge"] = not channel_settings["purge"]
-            self._save_subscriber_file_(self.subscriber_data)
+            self._save_subscriber_file(self.subscriber_data)
             if channel_settings["purge"]:
                 await self.bot.say("Purge mode on. Bot will now purge messages upon"
                                    " live updates. Please make sure your bot has "
@@ -258,7 +258,7 @@ class SubscriberFunctionality:
                     await self.bot.say("``{}`` is already added.".format(currency.title()))
                     return
                 channel_settings["currencies"].append(currency)
-                self._save_subscriber_file_(self.subscriber_data)
+                self._save_subscriber_file(self.subscriber_data)
                 await self.bot.say("``{}`` was successfully added.".format(currency.title()))
             else:
                 await self.bot.say("The channel needs to be subscribed first.")
@@ -266,7 +266,7 @@ class SubscriberFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error_(e)
+            await self._say_error(e)
         except CoinMarketException as e:
             print("An error has occured. See error.log.")
             logger.error("CoinMarketException: {}".format(str(e)))
@@ -293,7 +293,7 @@ class SubscriberFunctionality:
                 channel_settings = subscriber_list[channel]
                 if currency in channel_settings["currencies"]:
                     channel_settings["currencies"].remove(currency)
-                    self._save_subscriber_file_(self.subscriber_data)
+                    self._save_subscriber_file(self.subscriber_data)
                     await self.bot.say("``{}`` was successfully removed.".format(currency.title()))
                     return
                 else:
@@ -304,7 +304,7 @@ class SubscriberFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error_(e)
+            await self._say_error(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))

@@ -15,8 +15,8 @@ class AlertFunctionality:
         self.market_list = ""
         self.acronym_list = ""
         self.supported_operators = ["<", ">", "<=", ">="]
-        self.alert_data = self._check_alert_file_()
-        self._save_alert_file_(self.alert_data, backup=True)
+        self.alert_data = self._check_alert_file()
+        self._save_alert_file(self.alert_data, backup=True)
 
     def update(self, market_list, acronym_list):
         """
@@ -25,7 +25,7 @@ class AlertFunctionality:
         self.market_list = market_list
         self.acronym_list = acronym_list
 
-    def _check_alert_file_(self):
+    def _check_alert_file(self):
         """
         Checks to see if there's a valid alerts.json file
         """
@@ -33,13 +33,13 @@ class AlertFunctionality:
             with open('alerts.json') as alerts:
                 return json.load(alerts)
         except FileNotFoundError:
-            self._save_alert_file_()
+            self._save_alert_file()
             return json.loads('{}')
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _translate_operation_(self, operator):
+    def _translate_operation(self, operator):
         """
         Translates the supported operations for alerts
         into english
@@ -59,7 +59,7 @@ class AlertFunctionality:
         else:
             raise Exception("Unable to translate operation.")
 
-    def _check_alert_(self, currency, operator, price, fiat):
+    def _check_alert(self, currency, operator, price, fiat):
         """
         Checks if the alert condition isn't true
 
@@ -90,7 +90,7 @@ class AlertFunctionality:
         else:
             raise Exception
 
-    async def _say_error_(self, e):
+    async def _say_error(self, e):
         """
         Bot will check and say the error if given correct permissions
 
@@ -122,7 +122,7 @@ class AlertFunctionality:
             if currency not in self.market_list:
                 raise CurrencyException("Currency is invalid: ``{}``".format(currency))
             try:
-                if not self._check_alert_(currency, operator, price, ucase_fiat):
+                if not self._check_alert(currency, operator, price, ucase_fiat):
                     await self.bot.say("Failed to create alert. Current price "
                                        "of **{}** already meets the condition."
                                        "".format(currency.title()))
@@ -159,19 +159,19 @@ class AlertFunctionality:
             if channel_alert["price"].endswith('.'):
                 channel_alert["price"] = channel_alert["price"].replace('.', '')
             channel_alert["fiat"] = ucase_fiat
-            self._save_alert_file_(self.alert_data)
+            self._save_alert_file(self.alert_data)
             await self.bot.say("Alert has been set.")
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error_(e)
+            await self._say_error(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self._say_error_(e)
+            await self._say_error(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _save_alert_file_(self, alert_data={}, backup=False):
+    def _save_alert_file(self, alert_data={}, backup=False):
         """
         Saves alerts.json file
         """
@@ -199,11 +199,11 @@ class AlertFunctionality:
                 removed_alert = alert_num
                 alert_setting = alert_list[alert_num]
                 alert_currency = alert_setting["currency"]
-                alert_operation = self._translate_operation_(alert_setting["operation"])
+                alert_operation = self._translate_operation(alert_setting["operation"])
                 alert_price = alert_setting["price"]
                 alert_fiat = alert_setting["fiat"]
                 alert_list.pop(str(alert_num))
-                self._save_alert_file_(self.alert_data)
+                self._save_alert_file(self.alert_data)
                 await self.bot.say("Alert **{}** where **{}** is **{}** **{}** "
                                    "in **{}** was successfully "
                                    "removed.".format(removed_alert,
@@ -219,7 +219,7 @@ class AlertFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error_(e)
+            await self._say_error(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -241,7 +241,7 @@ class AlertFunctionality:
                     msg[0] = "The following alerts have been set:\n"
                     for alert in alert_list:
                         currency = alert_list[alert]["currency"].title()
-                        operation = self._translate_operation_(alert_list[alert]["operation"])
+                        operation = self._translate_operation(alert_list[alert]["operation"])
                         msg[int(alert)] = ("[**{}**] Alert when **{}** is **{}** **{}** "
                                            "in **{}**\n".format(alert,
                                                                 currency,
@@ -259,12 +259,12 @@ class AlertFunctionality:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error_(e)
+            await self._say_error(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    async def _alert_user_(self):
+    async def _alert_user(self):
         """
         Checks and displays alerts that have met the condition of the
         cryptocurrency price
@@ -276,11 +276,11 @@ class AlertFunctionality:
                 for alert in alert_list:
                     alert_currency = alert_list[alert]["currency"]
                     operator_symbol = alert_list[alert]["operation"]
-                    alert_operator = self._translate_operation_(operator_symbol)
+                    alert_operator = self._translate_operation(operator_symbol)
                     alert_price = alert_list[alert]["price"]
                     alert_fiat = alert_list[alert]["fiat"]
-                    if not self._check_alert_(alert_currency, operator_symbol,
-                                              alert_price, alert_fiat):
+                    if not self._check_alert(alert_currency, operator_symbol,
+                                             alert_price, alert_fiat):
                         raised_alerts[user].append(alert)
                         user_obj = await self.bot.get_user_info(user)
                         await self.bot.send_message(user_obj,
@@ -296,7 +296,7 @@ class AlertFunctionality:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
                         self.alert_data[user].pop(str(alert_num))
-                self._save_alert_file_(self.alert_data)
+                self._save_alert_file(self.alert_data)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
