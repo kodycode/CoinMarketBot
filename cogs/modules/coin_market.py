@@ -171,7 +171,8 @@ class CoinMarket:
             formatted_data += 'Percent Change (7D): **{}%**\n'.format(data['percent_change_7d'])
             return formatted_data, isPositivePercent
         except Exception as e:
-            raise CoinMarketException("Failed to format data: {}".format(e))
+            raise CoinMarketException("Failed to format data ({}): {}".format(data['name'],
+                                                                              e))
 
     def get_currency(self, acronym_list, currency, fiat):
         """
