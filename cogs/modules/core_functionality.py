@@ -37,7 +37,7 @@ class CoreFunctionality:
             self.alert.update(self.market_list, self.acronym_list)
             self.subscriber.update(self.market_list, self.acronym_list)
             await self.subscriber.display_live_data()
-            await self.alert._alert_user()
+            await self.alert.alert_user()
         except Exception as e:
             print("Failed to update data. See error.log.")
             logger.error("Exception: {}".format(str(e)))

@@ -18,6 +18,8 @@ Click [here](https://discordapp.com/oauth2/authorize?client_id=35337350127445606
 4. Run with ```python bot.py``` or ```python3 bot.py```
 
 You're also given the option to change the command prefix as you see fit inside of the config.json.
+
+If you want to use the :small_green_triangle: emoji, I've uploaded it in the emoji folder. To use it for your bot, have a server with the emoji uploaded to it (while also naming it small_green_triangle) and edit the id of the `SMALL_GREEN_TRIANGLE` variable at the top of `coin_market.py` to the emoji ID of your emoji.
 ## Commands:
 This bot has commands to look up cryptocurrencies, subscribe to live updates, create crypto price alerts for the user, and many more.
 

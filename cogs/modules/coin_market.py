@@ -18,6 +18,9 @@ fiat_suffix = [
     'SEK'
 ]
 
+SMALL_GREEN_TRIANGLE = "<:small_green_triangle:396586561413578752>"
+SMALL_RED_TRIANGLE = ":small_red_triangle_down:"
+
 
 class CurrencyException(Exception):
     """Exception class for invalid currencies"""
@@ -125,9 +128,9 @@ class CoinMarket:
             hour_trend = ''
             if data['percent_change_24h'] is not None:
                 if float(data['percent_change_24h']) >= 0:
-                    hour_trend = '<:small_green_triangle:396586561413578752>'
+                    hour_trend = SMALL_GREEN_TRIANGLE
                 else:
-                    hour_trend = ':small_red_triangle_down:'
+                    hour_trend = SMALL_RED_TRIANGLE
                     isPositivePercent = False
 
             formatted_data += '__**#{}. {} ({})**__ {}\n'.format(data['rank'],

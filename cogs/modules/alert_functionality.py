@@ -264,7 +264,7 @@ class AlertFunctionality:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    async def _alert_user(self):
+    async def alert_user(self):
         """
         Checks and displays alerts that have met the condition of the
         cryptocurrency price
