@@ -3,6 +3,7 @@ from cogs.modules.alert_functionality import AlertFunctionality
 from cogs.modules.coin_market_functionality import CoinMarketFunctionality
 from cogs.modules.coin_market import CoinMarket
 from cogs.modules.subscriber_functionality import SubscriberFunctionality
+from requests.exceptions import RequestException
 import asyncio
 import datetime
 import json
@@ -67,6 +68,9 @@ class CoreFunctionality:
             for currency in currency_data:
                 market_dict[currency['id']] = currency
             self.market_list = market_dict
+        except RequestException as e:
+            logger.error(str(e))
+            pass
         except Exception as e:
             print("Failed to update market. See error.log.")
             logger.error("Exception: {}".format(str(e)))
