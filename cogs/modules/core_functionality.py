@@ -29,10 +29,7 @@ class CoreFunctionality:
                                         self.coin_market,
                                         self.config_data["alert_capacity"])
         self.subscriber = SubscriberFunctionality(bot, self.coin_market)
-        try:
-            asyncio.ensure_future(self._continuous_updates())
-        except asyncio.CancelledError:
-            logger.error("Bot operation was cancelled.")
+        self.bot.loop.create_task(self._continuous_updates())
 
     async def _update_data(self):
         try:
