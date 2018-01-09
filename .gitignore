@@ -7,3 +7,5 @@ alerts.json
 alerts_backup.json
 subscribers.json
 subscribers_backup.json
+prefixes.json
+prefixes_backup.json
