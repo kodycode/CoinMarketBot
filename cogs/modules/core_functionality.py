@@ -77,6 +77,7 @@ class CoreFunctionality:
                            "anything is blocking you from requesting "
                            "data.")
                     raise CoreFunctionalityException(msg)
+                logger.warning("Retrying to connect..")
                 if market_stats is None:
                     market_stats = self.coin_market.fetch_coinmarket_stats()
                 if currency_data is None:
