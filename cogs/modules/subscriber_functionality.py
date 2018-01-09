@@ -1,5 +1,6 @@
 from bot_logger import logger
 from cogs.modules.coin_market import CoinMarketException, CurrencyException, FiatException
+from collections import defaultdict
 from discord.errors import Forbidden
 import asyncio
 import discord
@@ -76,11 +77,38 @@ class SubscriberFunctionality:
             print("Failed to update game status. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
+    def _check_invalid_sub_currencies(self):
+        """
+        Check if currencies have become invalid
+        If invalid, the currencies will be removed from the
+        subscriber currency list
+        """
+        try:
+            remove_currencies = defaultdict(list)
+            subscriber_list = self.subscriber_data
+            for channel in subscriber_list:
+                channel_settings = subscriber_list[channel]
+                for currency in channel_settings["currencies"]:
+                    if self.market_list is not None:
+                        if currency not in self.market_list:
+                            remove_currencies[channel].append(currency)
+            for channel in remove_currencies:
+                for currency in remove_currencies[channel]:
+                    subscriber_list[channel]["currencies"].remove(currency)
+                    logger.error("Removed '{}' from channel {}".format(currency,
+                                                                       channel))
+            if remove_currencies:
+                self._save_subscriber_file(self.subscriber_data)
+        except Exception as e:
+            raise CurrencyException("Failed to validate sub "
+                                    "currencies: {}".format(str(e)))
+
     async def display_live_data(self):
         """
         Obtains and displays live updates of coin stats in n-second intervals.
         """
         try:
+            self._check_invalid_sub_currencies()
             subscriber_list = self.subscriber_data
             msg_count = 0
             for channel in subscriber_list:
@@ -113,8 +141,8 @@ class SubscriberFunctionality:
                                 pass
                         msg_count = 0
         except CurrencyException as e:
+            print("An error has occured. See error.log.")
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error(e)
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
             await self.bot.say(e)
