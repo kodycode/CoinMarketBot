@@ -9,7 +9,7 @@ import json
 import re
 
 
-class CoreFunctionalityException(BaseException):
+class CoreFunctionalityException(Exception):
     """Handles core related errors"""
 
 
@@ -77,8 +77,10 @@ class CoreFunctionality:
                            "anything is blocking you from requesting "
                            "data.")
                     raise CoreFunctionalityException(msg)
-                market_stats = self.coin_market.fetch_coinmarket_stats()
-                currency_data = self.coin_market.fetch_currency_data(load_all=True)
+                if market_stats is None:
+                    market_stats = self.coin_market.fetch_coinmarket_stats()
+                if currency_data is None:
+                    currency_data = self.coin_market.fetch_currency_data(load_all=True)
                 retry_count += 1
                 await asyncio.sleep(5)
             market_dict = {}
@@ -86,7 +88,7 @@ class CoreFunctionality:
                 market_dict[currency['id']] = currency
             self.market_stats = market_stats
             self.market_list = market_dict
-        except CoreFunctionality as e:
+        except CoreFunctionalityException as e:
             logger.error(str(e))
         except Exception as e:
             print("Failed to update market. See error.log.")
