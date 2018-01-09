@@ -66,8 +66,8 @@ class CoreFunctionality:
         """
         try:
             retry_count = 0
-            market_stats = None
-            currency_data = None
+            market_stats = self.coin_market.fetch_coinmarket_stats()
+            currency_data = self.coin_market.fetch_currency_data(load_all=True)
             while market_stats is None or currency_data is None:
                 if retry_count >= 10:
                     msg = ("Max retry attempts reached. Please make "
@@ -77,7 +77,7 @@ class CoreFunctionality:
                            "anything is blocking you from requesting "
                            "data.")
                     raise CoreFunctionalityException(msg)
-                logger.warning("Retrying to connect..")
+                logger.warning("Retrying to get data..")
                 if market_stats is None:
                     market_stats = self.coin_market.fetch_coinmarket_stats()
                 if currency_data is None:
