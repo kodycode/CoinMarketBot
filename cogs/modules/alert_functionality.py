@@ -69,26 +69,31 @@ class AlertFunctionality:
         @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
         @return - True if condition doesn't exist, False if it does
         """
-        market_price = float(self.market_list[currency]["price_usd"])
-        market_price = float(self.coin_market.format_price(market_price,
-                                                           fiat,
-                                                           False))
-        if operator in self.supported_operators:
-            if operator == "<":
-                if market_price < float(price):
-                    return False
-            elif operator == "<=":
-                if market_price <= float(price):
-                    return False
-            elif operator == ">":
-                if market_price > float(price):
-                    return False
-            elif operator == ">=":
-                if market_price >= float(price):
-                    return False
+        if self.market_list is None:
             return True
+        if currency in self.market_list:
+            market_price = float(self.market_list[currency]["price_usd"])
+            market_price = float(self.coin_market.format_price(market_price,
+                                                               fiat,
+                                                               False))
+            if operator in self.supported_operators:
+                if operator == "<":
+                    if market_price < float(price):
+                        return False
+                elif operator == "<=":
+                    if market_price <= float(price):
+                        return False
+                elif operator == ">":
+                    if market_price > float(price):
+                        return False
+                elif operator == ">=":
+                    if market_price >= float(price):
+                        return False
+                return True
+            else:
+                raise Exception("Operator not supported: {}".format(operator))
         else:
-            raise Exception
+            return False
 
     async def _say_error(self, e):
         """
@@ -283,15 +288,19 @@ class AlertFunctionality:
                                              alert_price, alert_fiat):
                         raised_alerts[user].append(alert)
                         user_obj = await self.bot.get_user_info(user)
-                        await self.bot.send_message(user_obj,
-                                                    "Alert **{}**! "
-                                                    "**{}** is **{}** **{}** "
-                                                    "in **{}**"
-                                                    "".format(alert,
-                                                              alert_currency.title(),
-                                                              alert_operator,
-                                                              alert_price,
-                                                              alert_fiat))
+                        if alert_currency in self.market_list:
+                            msg = ("Alert **{}**! **{}** is **{}** **{}** "
+                                   "in **{}**".format(alert,
+                                                      alert_currency.title(),
+                                                      alert_operator,
+                                                      alert_price,
+                                                      alert_fiat))
+                        else:
+                            msg = ("**{}** is no longer a valid currency "
+                                   "according to the coinmarketapi api. Alerts "
+                                   "related to this currency will be removed."
+                                   "".format(alert_currency.title()))
+                        await self.bot.send_message(user_obj, msg)
             if raised_alerts:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
