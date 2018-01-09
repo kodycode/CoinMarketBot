@@ -3,11 +3,14 @@ from cogs.modules.alert_functionality import AlertFunctionality
 from cogs.modules.coin_market_functionality import CoinMarketFunctionality
 from cogs.modules.coin_market import CoinMarket
 from cogs.modules.subscriber_functionality import SubscriberFunctionality
-from requests.exceptions import RequestException
 import asyncio
 import datetime
 import json
 import re
+
+
+class CoreFunctionalityException(BaseException):
+    """Handles core related errors"""
 
 
 class CoreFunctionality:
@@ -30,7 +33,7 @@ class CoreFunctionality:
 
     async def _update_data(self):
         try:
-            self._update_market()
+            await self._update_market()
             self._load_acronyms()
             self.cmc.update(self.market_list,
                             self.acronym_list,
@@ -55,22 +58,36 @@ class CoreFunctionality:
             else:
                 await asyncio.sleep(20)
 
-    def _update_market(self):
+    async def _update_market(self):
         """
         Loads all the cryptocurrencies that exist in the market
 
         @return - list of crypto-currencies
         """
         try:
-            self.market_stats = self.coin_market.fetch_coinmarket_stats()
-            currency_data = self.coin_market.fetch_currency_data(load_all=True)
+            retry_count = 0
+            market_stats = None
+            currency_data = None
+            while market_stats is None or currency_data is None:
+                if retry_count >= 10:
+                    msg = ("Max retry attempts reached. Please make "
+                           "sure you're able to access coinmarketcap "
+                           "through their website, check if the coinmarketapi "
+                           "is down, and check if "
+                           "anything is blocking you from requesting "
+                           "data.")
+                    raise CoreFunctionalityException(msg)
+                market_stats = self.coin_market.fetch_coinmarket_stats()
+                currency_data = self.coin_market.fetch_currency_data(load_all=True)
+                retry_count += 1
+                await asyncio.sleep(5)
             market_dict = {}
             for currency in currency_data:
                 market_dict[currency['id']] = currency
+            self.market_stats = market_stats
             self.market_list = market_dict
-        except RequestException as e:
+        except CoreFunctionality as e:
             logger.error(str(e))
-            pass
         except Exception as e:
             print("Failed to update market. See error.log.")
             logger.error("Exception: {}".format(str(e)))

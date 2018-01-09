@@ -1,3 +1,4 @@
+from bot_logger import logger
 from coinmarketcap import Market
 from currency_converter import CurrencyConverter
 from requests.exceptions import RequestException
@@ -107,8 +108,9 @@ class CoinMarket:
                 return self.market.ticker(start=0, limit=0)
             return self.market.ticker(currency, convert=fiat)
         except RequestException as e:
-            raise RequestException("Failed to retrieve data - "
-                                   "Connection error: {}".format(str(e)))
+            logger.error("Failed to retrieve data - "
+                         "Connection error: {}".format(str(e)))
+            return None
         except Exception as e:
             raise CurrencyException("Failed to find currency: `{}`. Check "
                                     "if this currency is valid and also check "
@@ -249,8 +251,9 @@ class CoinMarket:
         try:
             return self.market.stats(convert=fiat)
         except RequestException as e:
-            raise RequestException("Failed to retrieve data - "
-                                   "Connection error: {}".format(str(e)))
+            logger.error("Failed to retrieve data - "
+                         "Connection error: {}".format(str(e)))
+            return None
         except Exception as e:
             raise MarketStatsException("Unable to retrieve crypto market stats "
                                        "at this time.")
