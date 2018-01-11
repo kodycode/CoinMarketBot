@@ -55,11 +55,11 @@ class CoinMarketFunctionality:
                     if msg_count == 0:
                         em = discord.Embed(title="Search results",
                                            description=msg,
-                                           colour=0xFFD700)
+                                           colour=0xFF9900)
                         msg_count += 1
                     else:
                         em = discord.Embed(description=msg,
-                                           colour=0xFFD700)
+                                           colour=0xFF9900)
                     await self.bot.say(embed=em)
             else:
                 data, isPositivePercent = self.coin_market.get_current_currency(self.market_list,
@@ -157,7 +157,7 @@ class CoinMarketFunctionality:
                                                                currency2.title(),
                                                                acronym2),
                                description=result,
-                               colour=0xFFD700)
+                               colour=0xFF9900)
             await self.bot.say(embed=em)
         except Forbidden:
             pass
@@ -190,7 +190,7 @@ class CoinMarketFunctionality:
                                                            data['symbol'],
                                                            ucase_fiat),
                                description=result,
-                               colour=0xFFD700)
+                               colour=0xFF9900)
             await self.bot.say(embed=em)
         except Forbidden:
             pass
@@ -230,7 +230,7 @@ class CoinMarketFunctionality:
                                                            currency,
                                                            data['symbol']),
                                description=result,
-                               colour=0xFFD700)
+                               colour=0xFF9900)
             await self.bot.say(embed=em)
         except Forbidden:
             pass

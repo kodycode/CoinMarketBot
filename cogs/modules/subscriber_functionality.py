@@ -154,11 +154,11 @@ class SubscriberFunctionality:
                             if first_post:
                                 em = discord.Embed(title="Live Currency Update",
                                                    description=msg,
-                                                   colour=0xFFD700)
+                                                   colour=0xFF9900)
                                 first_post = False
                             else:
                                 em = discord.Embed(description=msg,
-                                                   colour=0xFFD700)
+                                                   colour=0xFF9900)
                             try:
                                 await self.bot.send_message(channel_obj,
                                                             embed=em)
@@ -445,5 +445,5 @@ class SubscriberFunctionality:
                                     num_currencies))
             em = discord.Embed(title="Subscriber Settings",
                                description=msg,
-                               colour=0xFFD700)
+                               colour=0xFF9900)
             await self.bot.say(embed=em)
