@@ -2,7 +2,6 @@ from bot_logger import logger
 from cogs.modules.coin_market import CoinMarketException, CurrencyException, FiatException
 from collections import defaultdict
 from discord.errors import Forbidden
-import asyncio
 import discord
 import json
 
@@ -18,7 +17,6 @@ class SubscriberFunctionality:
         self.supported_rates = ["default", "half", "hourly"]
         self.subscriber_data = self._check_subscriber_file()
         self._save_subscriber_file(self.subscriber_data, backup=True)
-        asyncio.ensure_future(self._update_game_status())
 
     def update(self, market_list, acronym_list):
         """
@@ -65,7 +63,7 @@ class SubscriberFunctionality:
         except:
             pass
 
-    async def _update_game_status(self):
+    async def update_game_status(self):
         """
         Updates the game status of the bot
         """
@@ -205,7 +203,7 @@ class SubscriberFunctionality:
                 channel_settings["fiat"] = ucase_fiat
                 channel_settings["currencies"] = []
                 self._save_subscriber_file(self.subscriber_data)
-                await self._update_game_status()
+                await self.update_game_status()
                 await self.bot.say("Channel has succcesfully subscribed. Now "
                                    "add some currencies with `$addc` to begin "
                                    "receiving updates.")
@@ -227,7 +225,7 @@ class SubscriberFunctionality:
             if channel in subscriber_list:
                 subscriber_list.pop(channel)
                 self._save_subscriber_file(self.subscriber_data)
-                await self._update_game_status()
+                await self.update_game_status()
                 await self.bot.say("Channel has unsubscribed.")
             else:
                 await self.bot.say("Channel was never subscribed.")

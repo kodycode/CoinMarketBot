@@ -41,6 +41,7 @@ class CoreFunctionality:
                             self.market_stats)
             self.alert.update(self.market_list, self.acronym_list)
             self.subscriber.update(self.market_list, self.acronym_list)
+            await self.subscriber.update_game_stats()
             await self.alert.alert_user()
             if self.started:
                 await self.subscriber.display_live_data(minute)
