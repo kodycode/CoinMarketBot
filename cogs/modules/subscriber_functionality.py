@@ -15,6 +15,7 @@ class SubscriberFunctionality:
         self.coin_market = coin_market
         self.market_list = ""
         self.acronym_list = ""
+        self.supported_rates = ["default", "half", "hourly"]
         self.subscriber_data = self._check_subscriber_file()
         self._save_subscriber_file(self.subscriber_data, backup=True)
         asyncio.ensure_future(self._update_game_status())
@@ -103,43 +104,68 @@ class SubscriberFunctionality:
             raise CurrencyException("Failed to validate sub "
                                     "currencies: {}".format(str(e)))
 
-    async def display_live_data(self):
+    async def _get_live_data(self, channel, channel_settings, minute):
+        """
+        Obtains and returns the data of currencies requested
+        """
+        try:
+            valid_time = True
+            if int(minute) != int(channel_settings["interval"]):
+                if int(minute) % int(channel_settings["interval"]) != 0:
+                    valid_time = False
+        except KeyError:
+            pass
+        except Exception as e:
+            logger.error("Something went wrong with retrieving live data: {}"
+                         "".format(str(e)))
+            valid_time = False
+        finally:
+            if not valid_time:
+                return None
+            if channel_settings["currencies"]:
+                if channel_settings["purge"]:
+                    try:
+                        await self.bot.purge_from(channel,
+                                                  limit=100)
+                    except:
+                        pass
+                return self.coin_market.get_current_multiple_currency(self.market_list,
+                                                                      self.acronym_list,
+                                                                      channel_settings["currencies"],
+                                                                      channel_settings["fiat"])
+
+    async def display_live_data(self, minute):
         """
         Obtains and displays live updates of coin stats in n-second intervals.
+
+        @param minute - the minute the clock is at
         """
         try:
             self._check_invalid_sub_currencies()
             subscriber_list = self.subscriber_data
-            msg_count = 0
             for channel in subscriber_list:
-                if self.bot.get_channel(channel) in self.bot.get_all_channels():
+                first_post = True
+                channel_obj = self.bot.get_channel(channel)
+                if channel_obj in self.bot.get_all_channels():
                     channel_settings = subscriber_list[channel]
-                    if channel_settings["currencies"]:
-                        if channel_settings["purge"]:
-                            try:
-                                await self.bot.purge_from(self.bot.get_channel(channel),
-                                                          limit=100)
-                            except:
-                                pass
-                        data = self.coin_market.get_current_multiple_currency(self.market_list,
-                                                                              self.acronym_list,
-                                                                              channel_settings["currencies"],
-                                                                              channel_settings["fiat"])
+                    data = await self._get_live_data(channel_obj,
+                                                     channel_settings,
+                                                     minute)
+                    if data is not None:
                         for msg in data:
-                            if msg_count == 0:
+                            if first_post:
                                 em = discord.Embed(title="Live Currency Update",
                                                    description=msg,
                                                    colour=0xFFD700)
-                                msg_count += 1
+                                first_post = False
                             else:
                                 em = discord.Embed(description=msg,
                                                    colour=0xFFD700)
-                            try:
-                                await self.bot.send_message(self.bot.get_channel(channel),
-                                                            embed=em)
-                            except:
-                                pass
-                        msg_count = 0
+                        try:
+                            await self.bot.send_message(channel_obj,
+                                                        embed=em)
+                        except:
+                            pass
         except CurrencyException as e:
             print("An error has occured. See error.log.")
             logger.error("CurrencyException: {}".format(str(e)))
@@ -162,7 +188,7 @@ class SubscriberFunctionality:
         """
         try:
             ucase_fiat = self.coin_market.fiat_check(fiat)
-            channel = str(ctx.message.channel.id)
+            channel = ctx.message.channel.id
             subscriber_list = self.subscriber_data
             try:
                 self.bot.get_channel(channel).server  # validate channel
@@ -174,6 +200,7 @@ class SubscriberFunctionality:
             if channel not in subscriber_list:
                 subscriber_list[channel] = {}
                 channel_settings = subscriber_list[channel]
+                channel_settings["interval"] = "5"
                 channel_settings["purge"] = False
                 channel_settings["fiat"] = ucase_fiat
                 channel_settings["currencies"] = []
@@ -241,7 +268,7 @@ class SubscriberFunctionality:
         @param ctx - context of the command sent
         """
         try:
-            channel = str(ctx.message.channel.id)
+            channel = ctx.message.channel.id
             subscriber_list = self.subscriber_data
             if channel in subscriber_list:
                 channel_settings = subscriber_list[channel]
@@ -321,10 +348,11 @@ class SubscriberFunctionality:
                 if currency in channel_settings["currencies"]:
                     channel_settings["currencies"].remove(currency)
                     self._save_subscriber_file(self.subscriber_data)
-                    await self.bot.say("``{}`` was successfully removed.".format(currency.title()))
-                    return
+                    await self.bot.say("``{}`` was successfully removed."
+                                       "".format(currency.title()))
                 else:
-                    await self.bot.say("``{}`` was never added or is invalid.".format(currency.title()))
+                    await self.bot.say("``{}`` was never added or is invalid."
+                                       "".format(currency.title()))
             else:
                 await self.bot.say("The channel needs to be subscribed first.")
         except Forbidden:
@@ -335,3 +363,74 @@ class SubscriberFunctionality:
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
+
+    async def set_live_update_interval(self, ctx, rate):
+        """
+        Sets the interval at which the bot should post updates
+        to the channel. By default, it will be every 5 minutes.
+
+        @param ctx - context of the command sent
+        @param minutes - interval in minutes to send an update
+                         (only accepts multiples of 5)
+        """
+        try:
+            if rate not in self.supported_rates:
+                await self.bot.say("The rate entered is not supported. "
+                                   "Current intervals you can choose are:\n"
+                                   "**default** - every 5 minutes\n"
+                                   "**half** - every 30 minute mark\n"
+                                   "**hourly** - every hour mark\n")
+                return
+            channel = ctx.message.channel.id
+            if channel in self.subscriber_data:
+                if rate == "hourly":
+                    self.subscriber_data[channel]["interval"] = "60"
+                elif rate == "half":
+                    self.subscriber_data[channel]["interval"] = "30"
+                else:
+                    self.subscriber_data[channel]["interval"] = "5"
+                self._save_subscriber_file(self.subscriber_data)
+                await self.bot.say("Interval is set to **{}**".format(rate))
+            else:
+                await self.bot.say("Channel must be subscribed first.")
+        except Exception as e:
+            print("Unable to set live update interval. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
+
+    async def get_subset(self, ctx):
+        """
+        Gets the substats of the subscribed channel and displays
+        the interval of the bot, purge mode, and the number of
+        currencies
+
+        @param ctx - context of the command sent
+        """
+        try:
+            error = False
+            channel = ctx.message.channel.id
+            interval = self.subscriber_data[channel]["interval"]
+        except KeyError:
+            interval = "5"
+            pass
+        except Exception as e:
+            error = True
+            print("Unable to get substats. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
+        finally:
+            if error:
+                await self.bot.say("Error has occurred. Please try again "
+                                   "later.")
+                return
+            purge_mode = self.subscriber_data[channel]["purge"]
+            num_currencies = len(self.subscriber_data[channel]["currencies"])
+            msg = ("Update interval: Every **{}** minutes\n"
+                   "Purge Mode: **{}**\n"
+                   "Number of currencies subscribed to: **{}**\n"
+                   "To see what currencies are subscribed, type "
+                   "`$getc`".format(interval,
+                                    purge_mode,
+                                    num_currencies))
+            em = discord.Embed(title="Subscriber settings",
+                               description=msg,
+                               colour=0xFFD700)
+            await self.bot.say(embed=em)

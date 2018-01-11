@@ -75,3 +75,28 @@ class SubscriberCommands:
         @param ctx - context of the command sent
         """
         await self.cmd_function.subscriber.toggle_purge(ctx)
+
+    @commands.command(name='interval', pass_context=True)
+    async def interval(self, ctx, rate: str):
+        """
+        Sets the interval of how often the bot should post
+        An example for this command would be:
+        "$interval hourly"
+
+        Possible rate inputs currently are:
+        "default" - posts every 5 minutes
+        "half" - posts at every half-hour mark
+        "hourly" - posts at every hour mark
+
+        @param ctx - context of the command sent
+        @param rate - rate at which the bot should post
+        """
+        await self.cmd_function.subscriber.set_live_update_interval(ctx,
+                                                                    rate)
+
+    @commands.command(name='subset', pass_context=True)
+    async def substats(self, ctx):
+        """
+        Gets subscriber settings
+        """
+        await self.cmd_function.subscriber.get_subset(ctx)
