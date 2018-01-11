@@ -2,6 +2,7 @@ from bot_logger import logger
 from cogs.modules.coin_market import CurrencyException, FiatException
 from collections import defaultdict
 from discord.errors import Forbidden
+import discord
 import json
 
 
@@ -243,7 +244,6 @@ class AlertFunctionality:
             if user_id in user_list:
                 alert_list = user_list[user_id]
                 if len(alert_list) != 0:
-                    msg[0] = "The following alerts have been set:\n"
                     for alert in alert_list:
                         currency = alert_list[alert]["currency"].title()
                         operation = self._translate_operation(alert_list[alert]["operation"])
@@ -255,11 +255,20 @@ class AlertFunctionality:
                                                                 alert_list[alert]["fiat"]))
                     for line in sorted(msg):
                         result_msg += msg[line]
+                    color = 0x00FF00
                 else:
                     result_msg = "Channel does not have any alerts to display."
+                    color = 0xD14836
             else:
                 result_msg = "User never created any alerts."
-            await self.bot.say(result_msg)
+                color = 0xD14836
+            try:
+                em = discord.Embed(title="Alerts",
+                                   description=result_msg,
+                                   colour=color)
+                await self.bot.say(embed=em)
+            except:
+                pass
         except Forbidden:
             pass
         except CurrencyException as e:

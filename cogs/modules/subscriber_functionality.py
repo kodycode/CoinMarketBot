@@ -272,14 +272,23 @@ class SubscriberFunctionality:
                 channel_settings = subscriber_list[channel]
                 currency_list = channel_settings["currencies"]
                 if len(currency_list) != 0:
-                    msg = "Currently this channel displays the following:\n"
+                    msg = ""
                     for currency in currency_list:
                         msg += "__**{}**__\n".format(currency.title())
+                        color = 0x00FF00
                 else:
                     msg = "Channel does not have any currencies to display."
+                    color = 0xD14836
             else:
                 msg = "Channel was never subscribed."
-            await self.bot.say(msg)
+                color = 0xD14836
+            try:
+                em = discord.Embed(title="Subscriber Currencies",
+                                   description=msg,
+                                   colour=color)
+                await self.bot.say(embed=em)
+            except:
+                pass
         except Forbidden:
             pass
         except Exception as e:
@@ -405,7 +414,7 @@ class SubscriberFunctionality:
         try:
             error = False
             channel = ctx.message.channel.id
-            if channel not in self.subscriber_Data:
+            if channel not in self.subscriber_data:
                 raise Exception("Channel not in subscriber list.")
             interval = self.subscriber_data[channel]["interval"]
         except KeyError:
@@ -434,7 +443,7 @@ class SubscriberFunctionality:
                                     purge_mode,
                                     interval,
                                     num_currencies))
-            em = discord.Embed(title="Subscriber settings",
+            em = discord.Embed(title="Subscriber Settings",
                                description=msg,
                                colour=0xFFD700)
             await self.bot.say(embed=em)
