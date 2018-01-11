@@ -414,21 +414,24 @@ class SubscriberFunctionality:
             pass
         except Exception as e:
             error = True
-            print("Unable to get substats. See error.log.")
+            print("Unable to get sub settings. See error.log.")
             logger.error("Exception: {}".format(str(e)))
         finally:
             if error:
                 await self.bot.say("Error has occurred. Please try again "
                                    "later.")
                 return
+            fiat = self.subscriber_data[channel]["fiat"]
             purge_mode = self.subscriber_data[channel]["purge"]
             num_currencies = len(self.subscriber_data[channel]["currencies"])
-            msg = ("Update interval: Every **{}** minutes\n"
+            msg = ("Fiat: **{}**\n"
                    "Purge Mode: **{}**\n"
+                   "Update interval: Every **{}** minutes\n"
                    "Number of currencies subscribed to: **{}**\n"
                    "To see what currencies are subscribed, type "
-                   "`$getc`".format(interval,
+                   "`$getc`".format(fiat,
                                     purge_mode,
+                                    interval,
                                     num_currencies))
             em = discord.Embed(title="Subscriber settings",
                                description=msg,
