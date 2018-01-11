@@ -405,6 +405,8 @@ class SubscriberFunctionality:
         try:
             error = False
             channel = ctx.message.channel.id
+            if channel not in self.subscriber_Data:
+                raise Exception("Channel not in subscriber list.")
             interval = self.subscriber_data[channel]["interval"]
         except KeyError:
             interval = "5"
@@ -415,8 +417,10 @@ class SubscriberFunctionality:
             logger.error("Exception: {}".format(str(e)))
         finally:
             if error:
-                await self.bot.say("Error has occurred. Please try again "
-                                   "later.")
+                await self.bot.say("Unable to get sub settings. Please check "
+                                   "if this channel is subbed. If you believe"
+                                   " this is a mistake, please contact the "
+                                   "owner of the bot.")
                 return
             fiat = self.subscriber_data[channel]["fiat"]
             purge_mode = self.subscriber_data[channel]["purge"]
