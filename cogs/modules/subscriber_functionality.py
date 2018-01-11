@@ -277,7 +277,6 @@ class SubscriberFunctionality:
                         msg += "__**{}**__\n".format(currency.title())
                 else:
                     msg = "Channel does not have any currencies to display."
-                    await self.bot.say(msg)
             else:
                 msg = "Channel was never subscribed."
             await self.bot.say(msg)
