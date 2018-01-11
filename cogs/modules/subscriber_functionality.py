@@ -159,11 +159,11 @@ class SubscriberFunctionality:
                             else:
                                 em = discord.Embed(description=msg,
                                                    colour=0xFFD700)
-                        try:
-                            await self.bot.send_message(channel_obj,
-                                                        embed=em)
-                        except:
-                            pass
+                            try:
+                                await self.bot.send_message(channel_obj,
+                                                            embed=em)
+                            except:
+                                pass
         except CurrencyException as e:
             print("An error has occured. See error.log.")
             logger.error("CurrencyException: {}".format(str(e)))
