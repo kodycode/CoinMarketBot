@@ -369,9 +369,10 @@ class CoinMarket:
         @return - list of formatted cryptocurrency data
         """
         try:
+            fiat = self.fiat_check(fiat)
             formatted_data = []
             data_list = []
-            result_msg = []
+            result_msg = ''
             for currency in currency_list:
                 try:
                     if currency.upper() in acronym_list:
@@ -384,13 +385,12 @@ class CoinMarket:
             data_list.sort(key=lambda x: int(x['rank']))
             for data in data_list:
                 formatted_msg = self._format_currency_data(data, fiat, False)[0]
-                if len("{}{}".format(result_msg, formatted_msg)) < 2000:
-                    result_msg.append(formatted_msg)
+                if len(result_msg + formatted_msg) < 2000:
+                    result_msg += formatted_msg + '\n'
                 else:
-                    formatted_data.append('\n'.join(result_msg))
-                    result_msg.clear()
-                    result_msg.append(formatted_msg)
-            formatted_data.append('\n'.join(result_msg))
+                    formatted_data.append(result_msg)
+                    result_msg = '{}'.format(formatted_msg)
+            formatted_data.append(result_msg)
             return formatted_data
         except CurrencyException as e:
             raise
