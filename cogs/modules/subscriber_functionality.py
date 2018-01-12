@@ -9,9 +9,10 @@ import json
 class SubscriberFunctionality:
     """Handles Subscriber command Functionality"""
 
-    def __init__(self, bot, coin_market):
+    def __init__(self, bot, coin_market, sub_capacity):
         self.bot = bot
         self.coin_market = coin_market
+        self.sub_capacity = int(sub_capacity)
         self.market_list = ""
         self.acronym_list = ""
         self.supported_rates = ["default", "half", "hourly"]
@@ -196,6 +197,11 @@ class SubscriberFunctionality:
                                    "valid server.")
                 return
             if channel not in subscriber_list:
+                if len(self.subscriber_data) >= self.sub_capacity:
+                    await self.bot.say("Subscriber capacity met. Contact the "
+                                       "owner of this bot to reserve a "
+                                       "channel.")
+                    return
                 subscriber_list[channel] = {}
                 channel_settings = subscriber_list[channel]
                 channel_settings["interval"] = "5"

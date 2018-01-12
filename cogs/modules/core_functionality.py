@@ -29,7 +29,9 @@ class CoreFunctionality:
         self.alert = AlertFunctionality(bot,
                                         self.coin_market,
                                         self.config_data["alert_capacity"])
-        self.subscriber = SubscriberFunctionality(bot, self.coin_market)
+        self.subscriber = SubscriberFunctionality(bot,
+                                                  self.coin_market,
+                                                  self.config_data["subscriber_capacity"])
         self.bot.loop.create_task(self._continuous_updates())
 
     async def _update_data(self, minute=0):
