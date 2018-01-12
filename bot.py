@@ -22,8 +22,6 @@ class CoinMarketBot:
 
     def __init__(self):
         bot.run(config_data["token"])
-        logger.info('Starting bot..')
-        print("Starting bot..")
 
     @bot.event
     async def on_server_join(server):
@@ -176,6 +174,8 @@ save_prefix_file(prefix_list, backup=True)
 
 def main():
     try:
+        logger.info('Starting bot..')
+        print("Starting bot..")
         CoinMarketBot()
     except Exception as e:
         logging.error('Bot failed to run: {}'.format(str(e)))
