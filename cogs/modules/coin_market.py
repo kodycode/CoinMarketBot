@@ -385,11 +385,11 @@ class CoinMarket:
             for data in data_list:
                 formatted_msg = self._format_currency_data(data, fiat, False)[0]
                 if len("{}{}".format(result_msg, formatted_msg)) < 2000:
-                    result_msg.append("{}".format(formatted_msg))
+                    result_msg.append(formatted_msg)
                 else:
                     formatted_data.append('\n'.join(result_msg))
-                    result_msg = []
-                    result_msg.append('{}'.format(formatted_msg))
+                    result_msg.clear()
+                    result_msg.append(formatted_msg)
             formatted_data.append('\n'.join(result_msg))
             return formatted_data
         except CurrencyException as e:
