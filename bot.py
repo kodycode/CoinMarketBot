@@ -22,6 +22,8 @@ class CoinMarketBot:
 
     def __init__(self):
         bot.run(config_data["token"])
+        logger.info('Starting bot..')
+        print("Starting bot..")
 
     @bot.event
     async def on_server_join(server):
@@ -34,8 +36,6 @@ class CoinMarketBot:
     @bot.event
     async def on_ready():
         try:
-            logger.info('Starting bot..')
-            print("Starting bot..")
             bot.load_extension(COG_MANAGER)
             update_server_count(len(bot.servers))
         except Exception as e:
