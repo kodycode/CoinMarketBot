@@ -52,8 +52,13 @@ class MiscFunctionality:
                 alert_list = json.load(alerts)
                 for user in alert_list:
                     alert_count += len(alert_list[user])
-            uptime = time.gmtime(time.time() - self.start_time)
-            uptime = time.strftime("%H hours, %M minutes, %S seconds", uptime)
+            uptime = time.time() - self.start_time
+            hours = int(uptime // 3600)
+            minutes = int((uptime % 3600) // 60)
+            seconds = int(uptime % 60)
+            uptime = "{} hours, {} minutes, {} seconds".format(hours,
+                                                               minutes,
+                                                               seconds)
             for server in self.bot.servers:
                 channel_count += len(server.channels)
                 member_count += server.member_count
