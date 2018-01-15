@@ -371,13 +371,14 @@ class CoinMarket:
         except Exception as e:
             raise CoinMarketException(e)
 
-    def get_current_multiple_currency(self, market_list, acronym_list, cache_data, currency_list, fiat):
+    def get_current_multiple_currency(self, market_list, acronym_list, cached_data, currency_list, fiat):
         """
         Returns updated info of multiple coin stats using the current
         updated market list
 
         @param market_list - list of entire crypto market
         @param acronym_list - list of cryptocurrency acronyms
+        @param cached_data - a cache of formatted cryptocurrency data
         @param currency_list - list of cryptocurrencies to retrieve
         @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
         @return - list of formatted cryptocurrency data
@@ -394,14 +395,19 @@ class CoinMarket:
                             return currency
                     data_list.append(market_list[currency])
                 except:
-                    raise CurrencyException("Invalid currency: `{}`".format(currency))
+                    raise CurrencyException("Invalid currency: `{}`"
+                                            "".format(currency))
             data_list.sort(key=lambda x: int(x['rank']))
             for data in data_list:
-                if data['name'] not in cache_data:
-                    formatted_msg = self._format_currency_data(data, fiat, False)[0]
-                    cache_data[fiat][data['name']] = formatted_msg
+                if fiat not in cached_data:
+                    cached_data[fiat] = {}
+                if data['name'] not in cached_data[fiat]:
+                    formatted_msg = self._format_currency_data(data,
+                                                               fiat,
+                                                               False)[0]
+                    cached_data[fiat][data['name']] = formatted_msg
                 else:
-                    formatted_msg = cache_data[fiat][data['name']]
+                    formatted_msg = cached_data[fiat][data['name']]
                 if len(result_msg + formatted_msg) < 2000:
                     result_msg += "{}\n".format(formatted_msg)
                 else:
