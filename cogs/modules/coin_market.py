@@ -138,11 +138,10 @@ class CoinMarket:
                 else:
                     hour_trend = SMALL_RED_TRIANGLE
                     isPositivePercent = False
-
-            formatted_data += '__**#{}. {} ({})**__ {}\n'.format(data['rank'],
-                                                                 data['name'],
-                                                                 data['symbol'],
-                                                                 hour_trend)
+            header = "__**#{}. {} ({})**__ {}".format(data['rank'],
+                                                      data['name'],
+                                                      data['symbol'],
+                                                      hour_trend)
             converted_price = float(price.convert(float(data['price_usd']),
                                                   'USD',
                                                   fiat))
@@ -150,33 +149,48 @@ class CoinMarket:
             if converted_price.endswith('.'):
                 converted_price = converted_price.replace('.', '')
             if fiat in fiat_suffix:
-                formatted_data += 'Price ({}): **{} {}**\n'.format(fiat,
-                                                                   converted_price,
-                                                                   fiat_currencies[fiat])
+                formatted_price = '**{} {}**'.format(converted_price,
+                                                     fiat_currencies[fiat])
             else:
-                formatted_data += 'Price ({}): **{}{}**\n'.format(fiat,
-                                                                  fiat_currencies[fiat],
-                                                                  converted_price)
-            formatted_data += 'Price (BTC): **{:,}**\n'.format(float(data['price_btc']))
+                formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
+                                                    converted_price)
+            formatted_btc = '**{:,}**'.format(float(data['price_btc']))
             if single_search:
-                formatted_data += '\n'
+                formatted_btc += '\n'
             if (data['market_cap_usd'] is None):
-                formatted_data += 'Market Cap ({}): Unknown\n'.format(fiat)
+                market_cap = 'Unknown'
             else:
-                converted_price = float(price.convert(float(data['market_cap_usd']),
-                                                      'USD',
-                                                      fiat))
-                formatted_data += 'Market Cap ({}): **${:,}**\n'.format(fiat,
-                                                                        converted_price)
+                converted_market_cap = float(price.convert(float(data['market_cap_usd']),
+                                                           'USD',
+                                                           fiat))
+                market_cap = '**${:,}**'.format(converted_market_cap)
             if (data['available_supply'] is None):
-                formatted_data += 'Available Supply: Unknown\n'
+                available_supply = 'Unknown'
             else:
-                formatted_data += 'Available Supply: **{:,}**\n'.format(float(data['available_supply']))
+                available_supply = '**{:,}**'.format(float(data['available_supply']))
             if single_search:
-                formatted_data += '\n'
-            formatted_data += 'Percent Change (1H): **{}%**\n'.format(data['percent_change_1h'])
-            formatted_data += 'Percent Change (24H): **{}%**\n'.format(data['percent_change_24h'])
-            formatted_data += 'Percent Change (7D): **{}%**\n'.format(data['percent_change_7d'])
+                available_supply += '\n'
+            percent_change_1h = '**{}%**'.format(data['percent_change_1h'])
+            percent_change_24h = '**{}%**'.format(data['percent_change_24h'])
+            percent_change_7d = '**{}%**'.format(data['percent_change_7d'])
+            formatted_data = ("{}\n"
+                              "Price ({}): {}\n"
+                              "Price (BTC): {}\n"
+                              "Market Cap ({}): {}\n"
+                              "Available Supply: {}\n"
+                              "Percent Change (1H): {}\n"
+                              "Percent Change (24H): {}\n"
+                              "Percent Change (7D): {}\n"
+                              "".format(header,
+                                        fiat,
+                                        formatted_price,
+                                        formatted_btc,
+                                        fiat,
+                                        market_cap,
+                                        available_supply,
+                                        percent_change_1h,
+                                        percent_change_24h,
+                                        percent_change_7d))
             return formatted_data, isPositivePercent
         except Exception as e:
             raise CoinMarketException("Failed to format data ({}): {}".format(data['name'],
