@@ -15,6 +15,7 @@ class SubscriberFunctionality:
         self.sub_capacity = int(sub_capacity)
         self.market_list = ""
         self.acronym_list = ""
+        self.cache_data = {}
         self.supported_rates = ["default", "half", "hourly"]
         self.subscriber_data = self._check_subscriber_file()
         self._save_subscriber_file(self.subscriber_data, backup=True)
@@ -25,6 +26,7 @@ class SubscriberFunctionality:
         """
         self.market_list = market_list
         self.acronym_list = acronym_list
+        self.cache_data.clear()
 
     def _check_subscriber_file(self):
         """
@@ -130,6 +132,7 @@ class SubscriberFunctionality:
                         pass
                 return self.coin_market.get_current_multiple_currency(self.market_list,
                                                                       self.acronym_list,
+                                                                      self.cache_data,
                                                                       channel_settings["currencies"],
                                                                       channel_settings["fiat"])
 
