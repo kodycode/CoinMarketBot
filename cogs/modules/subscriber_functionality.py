@@ -127,7 +127,7 @@ class SubscriberFunctionality:
                 if channel_settings["purge"]:
                     try:
                         await self.bot.purge_from(channel,
-                                                  limit=100)
+                                                  limit=10)
                     except:
                         pass
                 return self.coin_market.get_current_multiple_currency(self.market_list,
