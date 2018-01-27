@@ -298,18 +298,21 @@ class AlertFunctionality:
                         raised_alerts[user].append(alert)
                         user_obj = await self.bot.get_user_info(user)
                         if alert_currency in self.market_list:
-                            msg = ("Alert **{}**! **{}** is **{}** **{}** "
-                                   "in **{}**".format(alert,
-                                                      alert_currency.title(),
-                                                      alert_operator,
-                                                      alert_price,
-                                                      alert_fiat))
+                            msg = ("**{}** is **{}** **{}** "
+                                   "**{}**".format(alert_currency.title(),
+                                                   alert_operator,
+                                                   alert_price,
+                                                   alert_fiat))
                         else:
                             msg = ("**{}** is no longer a valid currency "
                                    "according to the coinmarketapi api. Alerts "
                                    "related to this currency will be removed."
                                    "".format(alert_currency.title()))
-                        await self.bot.send_message(user_obj, msg)
+                        em = discord.Embed(title="Alert **{}**".format(alert),
+                                           description=msg,
+                                           colour=0xFF9900)
+                        await self.bot.send_message(user_obj,
+                                                    embed=em)
             if raised_alerts:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
