@@ -23,7 +23,9 @@ If you want to use the :small_green_triangle: emoji, I've uploaded it in the emo
 ## Commands:
 This bot has commands to look up cryptocurrencies, subscribe to live updates, create crypto price alerts for the user, and many more.
 
-See wiki page [here](https://github.com/kodycode/CoinMarketDiscordBot/wiki/Command-Page) or type ```$help```.
+[See examples of the commands here](https://github.com/kodycode/CoinMarketDiscordBot/wiki/Examples)
+
+[See wiki page here](https://github.com/kodycode/CoinMarketDiscordBot/wiki/Command-Page) or type ```$help```.
 
 Stay tuned for more features.
 
