@@ -3,7 +3,7 @@
 [![Discord Bots](https://discordbots.org/api/widget/servers/353373501274456065.svg?noavatar=true)](https://discordbots.org/bot/353373501274456065)
 [![Discord Bots](https://discordbots.org/api/widget/upvotes/353373501274456065.svg?noavatar=true)](https://discordbots.org/bot/353373501274456065)
 # CoinMarketDiscordBot
-A Discord bot that reports data from https://coinmarketcap.com/
+A Discord bot that sends constant cryptocurrency updates to text-channel subscribers and can create alert notifications.
 
 Created with Python 3.6 and the [CoinMarketCap API](https://github.com/mrsmn/coinmarketcap-api) wrapper.
 
