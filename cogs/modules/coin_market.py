@@ -154,7 +154,7 @@ class CoinMarket:
             else:
                 formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
                                                     converted_price)
-            formatted_btc = '**{:,}**'.format(float(data['price_btc']))
+            formatted_btc = '{:,.20f}'.format(float(data['price_btc'])).rstrip('0')
             if single_search:
                 formatted_btc += '\n'
             if (data['market_cap_usd'] is None):
@@ -175,7 +175,7 @@ class CoinMarket:
             percent_change_7d = '**{}%**'.format(data['percent_change_7d'])
             formatted_data = ("{}\n"
                               "Price ({}): {}\n"
-                              "Price (BTC): {}\n"
+                              "Price (BTC): **{}**\n"
                               "Market Cap ({}): {}\n"
                               "Available Supply: {}\n"
                               "Percent Change (1H): {}\n"
