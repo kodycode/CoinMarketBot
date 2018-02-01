@@ -131,7 +131,7 @@ class SubscriberFunctionality:
                     except:
                         pass
                 return self.coin_market.get_current_multiple_currency(self.market_list,
-                                                                      self.acronym_list,
+                                                                      None,
                                                                       self.cache_data,
                                                                       channel_settings["currencies"],
                                                                       channel_settings["fiat"])
