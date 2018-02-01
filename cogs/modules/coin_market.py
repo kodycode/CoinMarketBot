@@ -154,7 +154,9 @@ class CoinMarket:
             else:
                 formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
                                                     converted_price)
-            formatted_btc = '{:,.20f}'.format(float(data['price_btc'])).rstrip('0')
+            formatted_btc = '{:,.8f}'.format(float(data['price_btc'])).rstrip('0')
+            if formatted_btc.endswith('.'):
+                formatted_btc = formatted_btc.replace('.', '')
             if single_search:
                 formatted_btc += '\n'
             if (data['market_cap_usd'] is None):
