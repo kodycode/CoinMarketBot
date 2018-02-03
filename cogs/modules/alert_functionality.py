@@ -311,8 +311,11 @@ class AlertFunctionality:
                         em = discord.Embed(title="Alert **{}**".format(alert),
                                            description=msg,
                                            colour=0xFF9900)
-                        await self.bot.send_message(user_obj,
-                                                    embed=em)
+                        try:
+                            await self.bot.send_message(user_obj,
+                                                        embed=em)
+                        except:
+                            pass
             if raised_alerts:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
