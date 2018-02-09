@@ -96,14 +96,25 @@ class AlertFunctionality:
         else:
             return False
 
-    async def _say_error(self, e):
+    async def _say_msg(self, msg=None, channel=None, emb=False):
         """
-        Bot will check and say the error if given correct permissions
+        Bot will say msg if given correct permissions
 
-        @param e - error object
+        @param msg - msg to say
+        @param channel - channel to send msg to
+        @param emb - True if msg is embedded, False if not
         """
         try:
-            await self.bot.say(e)
+            if channel:
+                if emb:
+                    await self.bot.send_message(channel, embed=emb)
+                else:
+                    await self.bot.send_message(channel, msg)
+            else:
+                if emb:
+                    await self.bot.say(embed=emb)
+                else:
+                    await self.bot.say(msg)
         except:
             pass
 
@@ -123,18 +134,18 @@ class AlertFunctionality:
             if currency.upper() in self.acronym_list:
                 currency = self.acronym_list[currency.upper()]
                 if "Duplicate" in currency:
-                    await self.bot.say(currency)
+                    await self._say_msg(currency)
                     return
             if currency not in self.market_list:
                 raise CurrencyException("Currency is invalid: ``{}``".format(currency))
             try:
                 if not self._check_alert(currency, operator, price, ucase_fiat):
-                    await self.bot.say("Failed to create alert. Current price "
-                                       "of **{}** already meets the condition."
-                                       "".format(currency.title()))
+                    await self._say_msg("Failed to create alert. Current price "
+                                        "of **{}** already meets the condition."
+                                        "".format(currency.title()))
                     return
             except Exception:
-                await self.bot.say("Invalid operator: **{}**".format(operator))
+                await self._say_msg("Invalid operator: **{}**".format(operator))
                 return
             user_id = ctx.message.author.id
             if user_id not in self.alert_data:
@@ -157,22 +168,22 @@ class AlertFunctionality:
             if operator in self.supported_operators:
                 channel_alert["operation"] = operator
             else:
-                await self.bot.say("Invalid operator: {}. Your choices are **<*"
-                                   "*, **<=**, **>**, or **>=**"
-                                   "".format(operator))
+                await self._say_msg("Invalid operator: {}. Your choices are **<*"
+                                    "*, **<=**, **>**, or **>=**"
+                                    "".format(operator))
                 return
             channel_alert["price"] = ("{:.6f}".format(price)).rstrip('0')
             if channel_alert["price"].endswith('.'):
                 channel_alert["price"] = channel_alert["price"].replace('.', '')
             channel_alert["fiat"] = ucase_fiat
             self._save_alert_file(self.alert_data)
-            await self.bot.say("Alert has been set.")
+            await self._say_msg("Alert has been set.")
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error(e)
+            await self._say_msg(str(e))
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self._say_error(e)
+            await self._say_msg(str(e))
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -210,22 +221,22 @@ class AlertFunctionality:
                 alert_fiat = alert_setting["fiat"]
                 alert_list.pop(str(alert_num))
                 self._save_alert_file(self.alert_data)
-                await self.bot.say("Alert **{}** where **{}** is **{}** **{}** "
-                                   "in **{}** was successfully "
-                                   "removed.".format(removed_alert,
-                                                     alert_currency,
-                                                     alert_operation,
-                                                     alert_price,
-                                                     alert_fiat))
+                await self._say_msg("Alert **{}** where **{}** is **{}** **{}** "
+                                    "in **{}** was successfully "
+                                    "removed.".format(removed_alert,
+                                                      alert_currency,
+                                                      alert_operation,
+                                                      alert_price,
+                                                      alert_fiat))
             else:
-                await self.bot.say("The number you've entered does not exist "
-                                   "in the alert list. Use `$geta` to receive "
-                                   "a list of ongoing alerts.")
+                await self._say_msg("The number you've entered does not exist "
+                                    "in the alert list. Use `$geta` to receive "
+                                    "a list of ongoing alerts.")
         except Forbidden:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error(e)
+            await self._say_msg(str(e))
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -262,18 +273,15 @@ class AlertFunctionality:
             else:
                 result_msg = "User never created any alerts."
                 color = 0xD14836
-            try:
-                em = discord.Embed(title="Alerts",
-                                   description=result_msg,
-                                   colour=color)
-                await self.bot.say(embed=em)
-            except:
-                pass
+            em = discord.Embed(title="Alerts",
+                               description=result_msg,
+                               colour=color)
+            await self.bot.say(embed=em)
         except Forbidden:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error(e)
+            await self._say_msg(str(e))
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -290,11 +298,11 @@ class AlertFunctionality:
                 for alert in alert_list:
                     alert_currency = alert_list[alert]["currency"]
                     operator_symbol = alert_list[alert]["operation"]
-                    alert_operator = self._translate_operation(operator_symbol)
                     alert_price = alert_list[alert]["price"]
                     alert_fiat = alert_list[alert]["fiat"]
                     if not self._check_alert(alert_currency, operator_symbol,
                                              alert_price, alert_fiat):
+                        alert_operator = self._translate_operation(operator_symbol)
                         raised_alerts[user].append(alert)
                         user_obj = await self.bot.get_user_info(user)
                         if alert_currency in self.market_list:
@@ -311,11 +319,7 @@ class AlertFunctionality:
                         em = discord.Embed(title="Alert **{}**".format(alert),
                                            description=msg,
                                            colour=0xFF9900)
-                        try:
-                            await self.bot.send_message(user_obj,
-                                                        embed=em)
-                        except:
-                            pass
+                        await self._say_msg(channel=user_obj, emb=em)
             if raised_alerts:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
