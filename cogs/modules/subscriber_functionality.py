@@ -16,6 +16,7 @@ class SubscriberFunctionality:
         self.market_list = ""
         self.acronym_list = ""
         self.cache_data = {}
+        self.cache_channel = {}
         self.supported_rates = ["default", "half", "hourly"]
         self.subscriber_data = self._check_subscriber_file()
         self._save_subscriber_file(self.subscriber_data, backup=True)
@@ -147,7 +148,11 @@ class SubscriberFunctionality:
             subscriber_list = self.subscriber_data
             for channel in subscriber_list:
                 first_post = True
-                channel_obj = self.bot.get_channel(channel)
+                if channel not in self.cache_channel:
+                    channel_obj = self.bot.get_channel(channel)
+                    self.cache_channel[channel] = channel_obj
+                else:
+                    channel_obj = self.cache_channel[channel]
                 if channel_obj in self.bot.get_all_channels():
                     channel_settings = subscriber_list[channel]
                     data = await self._get_live_data(channel_obj,
