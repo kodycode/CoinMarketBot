@@ -96,13 +96,13 @@ class AlertFunctionality:
         else:
             return False
 
-    async def _say_msg(self, msg=None, channel=None, emb=False):
+    async def _say_msg(self, msg=None, channel=None, emb=None):
         """
         Bot will say msg if given correct permissions
 
         @param msg - msg to say
         @param channel - channel to send msg to
-        @param emb - True if msg is embedded, False if not
+        @param emb - embedded msg to say
         """
         try:
             if channel:
