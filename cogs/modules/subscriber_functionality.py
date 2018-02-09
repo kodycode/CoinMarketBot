@@ -56,14 +56,25 @@ class SubscriberFunctionality:
                       outfile,
                       indent=4)
 
-    async def _say_error(self, e):
+    async def _say_msg(self, msg=None, channel=None, emb=False):
         """
-        Bot will check and say the error if given correct permissions
+        Bot will say msg if given correct permissions
 
-        @param e - error object
+        @param msg - msg to say
+        @param channel - channel to send msg to
+        @param emb - True if msg is embedded, False if not
         """
         try:
-            await self.bot.say(e)
+            if channel:
+                if emb:
+                    await self.bot.send_message(channel, embed=emb)
+                else:
+                    await self.bot.send_message(channel, msg)
+            else:
+                if emb:
+                    await self.bot.say(embed=emb)
+                else:
+                    await self.bot.say(msg)
         except:
             pass
 
@@ -92,7 +103,7 @@ class SubscriberFunctionality:
             for channel in subscriber_list:
                 channel_settings = subscriber_list[channel]
                 for currency in channel_settings["currencies"]:
-                    if self.market_list is not None:
+                    if self.market_list:
                         if currency not in self.market_list:
                             remove_currencies[channel].append(currency)
             for channel in remove_currencies:
@@ -158,7 +169,7 @@ class SubscriberFunctionality:
                     data = await self._get_live_data(channel_obj,
                                                      channel_settings,
                                                      minute)
-                    if data is not None:
+                    if data:
                         for msg in data:
                             if first_post:
                                 em = discord.Embed(title="Live Currency Update",
@@ -168,17 +179,15 @@ class SubscriberFunctionality:
                             else:
                                 em = discord.Embed(description=msg,
                                                    colour=0xFF9900)
-                            try:
-                                await self.bot.send_message(channel_obj,
-                                                            embed=em)
-                            except:
-                                pass
+                            await self._say_msg(channel=channel_obj,
+                                                emb=em)
+
         except CurrencyException as e:
             print("An error has occured. See error.log.")
             logger.error("CurrencyException: {}".format(str(e)))
         except FiatException as e:
             logger.error("FiatException: {}".format(str(e)))
-            await self.bot.say(e)
+            await self._say_msg(e)
         except CoinMarketException as e:
             print("An error has occured. See error.log.")
             logger.error("CoinMarketException: {}".format(str(e)))
@@ -200,15 +209,15 @@ class SubscriberFunctionality:
             try:
                 self.bot.get_channel(channel).server  # validate channel
             except:
-                await self.bot.say("Failed to add channel as a subscriber. "
-                                   " Please make sure this channel is within a "
-                                   "valid server.")
+                await self._say_msg("Failed to add channel as a subscriber. "
+                                    " Please make sure this channel is within a "
+                                    "valid server.")
                 return
             if channel not in subscriber_list:
                 if len(self.subscriber_data) >= self.sub_capacity:
-                    await self.bot.say("Subscriber capacity met. Contact the "
-                                       "owner of this bot to reserve a "
-                                       "channel.")
+                    await self._say_msg("Subscriber capacity met. Contact the "
+                                        "owner of this bot to reserve a "
+                                        "channel.")
                     return
                 subscriber_list[channel] = {}
                 channel_settings = subscriber_list[channel]
@@ -218,11 +227,11 @@ class SubscriberFunctionality:
                 channel_settings["currencies"] = []
                 self._save_subscriber_file(self.subscriber_data)
                 await self.update_game_status()
-                await self.bot.say("Channel has succcesfully subscribed. Now "
-                                   "add some currencies with `$addc` to begin "
-                                   "receiving updates.")
+                await self._say_msg("Channel has succcesfully subscribed. Now "
+                                    "add some currencies with `$addc` to begin "
+                                    "receiving updates.")
             else:
-                await self.bot.say("Channel is already subscribed.")
+                await self._say_msg("Channel is already subscribed.")
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -240,9 +249,9 @@ class SubscriberFunctionality:
                 subscriber_list.pop(channel)
                 self._save_subscriber_file(self.subscriber_data)
                 await self.update_game_status()
-                await self.bot.say("Channel has unsubscribed.")
+                await self._say_msg("Channel has unsubscribed.")
             else:
-                await self.bot.say("Channel was never subscribed.")
+                await self._say_msg("Channel was never subscribed.")
         except Forbidden:
             pass
         except Exception as e:
@@ -258,20 +267,20 @@ class SubscriberFunctionality:
             subscriber_list = self.subscriber_data
             self.bot.get_channel(channel).server  # validate channel
             if channel not in subscriber_list:
-                await self.bot.say("Channel was never subscribed.")
+                await self._say_msg("Channel was never subscribed.")
                 return
             channel_settings = subscriber_list[channel]
             channel_settings["purge"] = not channel_settings["purge"]
             self._save_subscriber_file(self.subscriber_data)
             if channel_settings["purge"]:
-                await self.bot.say("Purge mode on. Bot will now purge messages upon"
-                                   " live updates. Please make sure your bot has "
-                                   "the right permissions to remove messages.")
+                await self._say_msg("Purge mode on. Bot will now purge messages upon"
+                                    " live updates. Please make sure your bot has "
+                                    "the right permissions to remove messages.")
             else:
-                await self.bot.say("Purge mode off.")
+                await self._say_msg("Purge mode off.")
         except Exception as e:
-            await self.bot.say("Failed to set purge mode. Please make sure this"
-                               " channel is within a valid server.")
+            await self._say_msg("Failed to set purge mode. Please make sure this"
+                                " channel is within a valid server.")
 
     async def get_sub_currencies(self, ctx):
         """
@@ -300,7 +309,7 @@ class SubscriberFunctionality:
                 em = discord.Embed(title="Subscriber Currencies",
                                    description=msg,
                                    colour=color)
-                await self.bot.say(embed=em)
+                await self._say_msg(emb=em)
             except:
                 pass
         except Forbidden:
@@ -320,7 +329,7 @@ class SubscriberFunctionality:
             if currency.upper() in self.acronym_list:
                 currency = self.acronym_list[currency.upper()]
                 if "Duplicate" in currency:
-                    await self.bot.say(currency)
+                    await self._say_msg(currency)
                     return
             if currency not in self.market_list:
                 raise CurrencyException("Currency is invalid: ``{}``".format(currency))
@@ -329,18 +338,18 @@ class SubscriberFunctionality:
             if channel in subscriber_list:
                 channel_settings = subscriber_list[channel]
                 if currency in channel_settings["currencies"]:
-                    await self.bot.say("``{}`` is already added.".format(currency.title()))
+                    await self._say_msg("``{}`` is already added.".format(currency.title()))
                     return
                 channel_settings["currencies"].append(currency)
                 self._save_subscriber_file(self.subscriber_data)
-                await self.bot.say("``{}`` was successfully added.".format(currency.title()))
+                await self._say_msg("``{}`` was successfully added.".format(currency.title()))
             else:
-                await self.bot.say("The channel needs to be subscribed first.")
+                await self._say_msg("The channel needs to be subscribed first.")
         except Forbidden:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error(e)
+            await self._say_msg(e)
         except CoinMarketException as e:
             print("An error has occured. See error.log.")
             logger.error("CoinMarketException: {}".format(str(e)))
@@ -359,7 +368,7 @@ class SubscriberFunctionality:
             if currency.upper() in self.acronym_list:
                 currency = self.acronym_list[currency.upper()]
                 if "Duplicate" in currency:
-                    await self.bot.say(currency)
+                    await self._say_msg(currency)
                     return
             channel = ctx.message.channel.id
             subscriber_list = self.subscriber_data
@@ -368,18 +377,18 @@ class SubscriberFunctionality:
                 if currency in channel_settings["currencies"]:
                     channel_settings["currencies"].remove(currency)
                     self._save_subscriber_file(self.subscriber_data)
-                    await self.bot.say("``{}`` was successfully removed."
-                                       "".format(currency.title()))
+                    await self._say_msg("``{}`` was successfully removed."
+                                        "".format(currency.title()))
                 else:
-                    await self.bot.say("``{}`` was never added or is invalid."
-                                       "".format(currency.title()))
+                    await self._say_msg("``{}`` was never added or is invalid."
+                                        "".format(currency.title()))
             else:
-                await self.bot.say("The channel needs to be subscribed first.")
+                await self._say_msg("The channel needs to be subscribed first.")
         except Forbidden:
             pass
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
-            await self._say_error(e)
+            await self._say_msg(e)
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -395,11 +404,11 @@ class SubscriberFunctionality:
         """
         try:
             if rate not in self.supported_rates:
-                await self.bot.say("The rate entered is not supported. "
-                                   "Current intervals you can choose are:\n"
-                                   "**default** - every 5 minutes\n"
-                                   "**half** - every 30 minute mark\n"
-                                   "**hourly** - every hour mark\n")
+                await self._say_msg("The rate entered is not supported. "
+                                    "Current intervals you can choose are:\n"
+                                    "**default** - every 5 minutes\n"
+                                    "**half** - every 30 minute mark\n"
+                                    "**hourly** - every hour mark\n")
                 return
             channel = ctx.message.channel.id
             if channel in self.subscriber_data:
@@ -410,9 +419,9 @@ class SubscriberFunctionality:
                 else:
                     self.subscriber_data[channel]["interval"] = "5"
                 self._save_subscriber_file(self.subscriber_data)
-                await self.bot.say("Interval is set to **{}**".format(rate))
+                await self._say_msg("Interval is set to **{}**".format(rate))
             else:
-                await self.bot.say("Channel must be subscribed first.")
+                await self._say_msg("Channel must be subscribed first.")
         except Exception as e:
             print("Unable to set live update interval. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -440,10 +449,10 @@ class SubscriberFunctionality:
             logger.error("Exception: {}".format(str(e)))
         finally:
             if error:
-                await self.bot.say("Unable to get sub settings. Please check "
-                                   "if this channel is subbed. If you believe"
-                                   " this is a mistake, please contact the "
-                                   "owner of the bot.")
+                await self._say_msg("Unable to get sub settings. Please check "
+                                    "if this channel is subbed. If you believe"
+                                    " this is a mistake, please contact the "
+                                    "owner of the bot.")
                 return
             fiat = self.subscriber_data[channel]["fiat"]
             purge_mode = self.subscriber_data[channel]["purge"]
@@ -460,4 +469,4 @@ class SubscriberFunctionality:
             em = discord.Embed(title="Subscriber Settings",
                                description=msg,
                                colour=0xFF9900)
-            await self.bot.say(embed=em)
+            await self._say_msg(emb=em)
