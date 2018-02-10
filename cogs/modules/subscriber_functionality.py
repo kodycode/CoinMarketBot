@@ -164,24 +164,22 @@ class SubscriberFunctionality:
                     self.cache_channel[channel] = channel_obj
                 else:
                     channel_obj = self.cache_channel[channel]
-                if channel_obj in self.bot.get_all_channels():
-                    channel_settings = subscriber_list[channel]
-                    data = await self._get_live_data(channel_obj,
-                                                     channel_settings,
-                                                     minute)
-                    if data:
-                        for msg in data:
-                            if first_post:
-                                em = discord.Embed(title="Live Currency Update",
-                                                   description=msg,
-                                                   colour=0xFF9900)
-                                first_post = False
-                            else:
-                                em = discord.Embed(description=msg,
-                                                   colour=0xFF9900)
-                            await self._say_msg(channel=channel_obj,
-                                                emb=em)
-
+                channel_settings = subscriber_list[channel]
+                data = await self._get_live_data(channel_obj,
+                                                 channel_settings,
+                                                 minute)
+                if data:
+                    for msg in data:
+                        if first_post:
+                            em = discord.Embed(title="Live Currency Update",
+                                               description=msg,
+                                               colour=0xFF9900)
+                            first_post = False
+                        else:
+                            em = discord.Embed(description=msg,
+                                               colour=0xFF9900)
+                        await self._say_msg(channel=channel_obj,
+                                            emb=em)
         except CurrencyException as e:
             print("An error has occured. See error.log.")
             logger.error("CurrencyException: {}".format(str(e)))
