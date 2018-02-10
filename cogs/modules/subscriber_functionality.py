@@ -157,7 +157,6 @@ class SubscriberFunctionality:
         try:
             self._check_invalid_sub_currencies()
             subscriber_list = self.subscriber_data.copy()
-            all_channels = self.bot.get_all_channels()
             for channel in subscriber_list:
                 first_post = True
                 if channel not in self.cache_channel:
@@ -165,7 +164,7 @@ class SubscriberFunctionality:
                     self.cache_channel[channel] = channel_obj
                 else:
                     channel_obj = self.cache_channel[channel]
-                if channel_obj in all_channels:
+                if channel_obj in self.bot.get_all_channels():
                     channel_settings = subscriber_list[channel]
                     data = await self._get_live_data(channel_obj,
                                                      channel_settings,
