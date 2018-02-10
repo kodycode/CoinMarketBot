@@ -382,6 +382,7 @@ class AlertFunctionality:
                                            description=msg,
                                            colour=0xFF9900)
                         await self._say_msg(channel=channel_obj, emb=em)
+                    percent_change.clear()
             if raised_alerts:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
