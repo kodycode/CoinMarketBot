@@ -173,6 +173,7 @@ class AlertFunctionality:
             alert_list[alert_num] = {}
             channel_alert = alert_list[alert_num]
             channel_alert["currency"] = currency
+            channel_alert["channel"] = ctx.message.channel.id
             if operator in self.supported_operators:
                 channel_alert["operation"] = operator
             else:
@@ -190,7 +191,8 @@ class AlertFunctionality:
                     channel_alert["price"] = channel_alert["price"].replace('.', '')
             channel_alert["fiat"] = ucase_fiat
             self._save_alert_file(self.alert_data)
-            await self._say_msg("Alert has been set.")
+            await self._say_msg("Alert has been set. This bot will post the "
+                                "alert in this specific channel.")
         except CurrencyException as e:
             logger.error("CurrencyException: {}".format(str(e)))
             await self._say_msg(str(e))
@@ -349,21 +351,28 @@ class AlertFunctionality:
                                              percent_change):
                         alert_operator = self._translate_operation(operator_symbol)
                         raised_alerts[user].append(alert)
-                        user_obj = await self.bot.get_user_info(user)
+                        if "channel" not in alert_list[alert]:
+                            channel_obj = await self.bot.get_user_info(user)
+                        else:
+                            channel_obj = alert_list[alert]["channel"]
+                            channel_obj = self.bot.get_channel(channel_obj)
+                            if not channel_obj:
+                                channel_obj = await self.bot.get_user_info(user)
                         if alert_currency in self.market_list:
-                            msg = ("**{}** is **{}** **{}%** "
+                            msg = ("**{}** is **{}** **{}**"
                                    "".format(alert_currency.title(),
                                              alert_operator,
                                              alert_value))
                             if "percent_change" in alert_list[alert]:
                                 if "hour" == alert_list[alert]["percent_change"]:
-                                    msg += "(**1h**)\n"
+                                    msg += "% (**1h**)\n"
                                 elif "day" == alert_list[alert]["percent_change"]:
-                                    msg += "(**24h**)\n"
+                                    msg += "% (**24h**)\n"
                                 elif "week" == alert_list[alert]["percent_change"]:
-                                    msg += "(**7d**)\n"
+                                    msg += "% (**7d**)\n"
                             else:
-                                msg += "**{}**".format(alert_fiat)
+                                msg += " **{}**\n".format(alert_fiat)
+                            msg += "<@{}>".format(user)
                         else:
                             msg = ("**{}** is no longer a valid currency "
                                    "according to the coinmarketapi api. Alerts "
@@ -372,7 +381,7 @@ class AlertFunctionality:
                         em = discord.Embed(title="Alert **{}**".format(alert),
                                            description=msg,
                                            colour=0xFF9900)
-                        await self._say_msg(channel=user_obj, emb=em)
+                        await self._say_msg(channel=channel_obj, emb=em)
             if raised_alerts:
                 for user in raised_alerts:
                     for alert_num in raised_alerts[user]:
