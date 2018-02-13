@@ -148,24 +148,27 @@ class CoinMarket:
             converted_price = "{:,.6f}".format(converted_price).rstrip('0')
             if converted_price.endswith('.'):
                 converted_price = converted_price.replace('.', '')
-            if fiat in fiat_suffix:
-                formatted_price = '**{} {}**'.format(converted_price,
-                                                     fiat_currencies[fiat])
-            else:
-                formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
-                                                    converted_price)
             formatted_btc = '{:,.8f}'.format(float(data['price_btc'])).rstrip('0')
             if formatted_btc.endswith('.'):
                 formatted_btc = formatted_btc.replace('.', '')
             if single_search:
                 formatted_btc += '\n'
             if (data['market_cap_usd'] is None):
-                market_cap = 'Unknown'
+                formatted_market_cap = 'Unknown'
             else:
                 converted_market_cap = price.convert(float(data['market_cap_usd']),
                                                      'USD',
                                                      fiat)
-                market_cap = '**${:,}**'.format(int(converted_market_cap))
+            if fiat in fiat_suffix:
+                formatted_price = '**{} {}**'.format(converted_price,
+                                                     fiat_currencies[fiat])
+                formatted_market_cap = '**{:,} {}**'.format(int(converted_market_cap),
+                                                            fiat_currencies[fiat])
+            else:
+                formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
+                                                    converted_price)
+                formatted_market_cap = '**{}{:,}**'.format(fiat_currencies[fiat],
+                                                           int(converted_market_cap))
             if (data['available_supply'] is None):
                 available_supply = 'Unknown'
             else:
@@ -188,7 +191,7 @@ class CoinMarket:
                                         formatted_price,
                                         formatted_btc,
                                         fiat,
-                                        market_cap,
+                                        formatted_market_cap,
                                         available_supply,
                                         percent_change_1h,
                                         percent_change_24h,
