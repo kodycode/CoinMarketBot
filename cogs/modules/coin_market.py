@@ -154,7 +154,7 @@ class CoinMarket:
             if single_search:
                 formatted_btc += '\n'
             if data['market_cap_usd'] is None:
-                converted_market_cap = 'Unknown'
+                formatted_market_cap = 'Unknown'
             else:
                 converted_market_cap = price.convert(float(data['market_cap_usd']),
                                                      'USD',
