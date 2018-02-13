@@ -162,14 +162,14 @@ class CoinMarket:
             if (data['market_cap_usd'] is None):
                 market_cap = 'Unknown'
             else:
-                converted_market_cap = float(price.convert(float(data['market_cap_usd']),
-                                                           'USD',
-                                                           fiat))
-                market_cap = '**${:,}**'.format(converted_market_cap)
+                converted_market_cap = price.convert(float(data['market_cap_usd']),
+                                                     'USD',
+                                                     fiat)
+                market_cap = '**${:,}**'.format(int(converted_market_cap))
             if (data['available_supply'] is None):
                 available_supply = 'Unknown'
             else:
-                available_supply = '**{:,}**'.format(float(data['available_supply']))
+                available_supply = '**{:,}**'.format(int(float(data['available_supply'])))
             if single_search:
                 available_supply += '\n'
             percent_change_1h = '**{}%**'.format(data['percent_change_1h'])
@@ -287,7 +287,7 @@ class CoinMarket:
             if (stats['total_market_cap_usd'] is None):
                 formatted_stats += "Total Market Cap (USD): Unknown"
             else:
-                converted_price = c.convert(float(stats['total_market_cap_usd']), 'USD', fiat)
+                converted_price = int(c.convert(float(stats['total_market_cap_usd']), 'USD', fiat))
                 if fiat in fiat_suffix:
                     formatted_stats += "Total Market Cap ({}): **{:,} {}**\n".format(fiat,
                                                                                      converted_price,
