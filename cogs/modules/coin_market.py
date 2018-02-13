@@ -153,8 +153,8 @@ class CoinMarket:
                 formatted_btc = formatted_btc.replace('.', '')
             if single_search:
                 formatted_btc += '\n'
-            if (data['market_cap_usd'] is None):
-                formatted_market_cap = 'Unknown'
+            if data['market_cap_usd'] is None:
+                converted_market_cap = 'Unknown'
             else:
                 converted_market_cap = price.convert(float(data['market_cap_usd']),
                                                      'USD',
@@ -162,13 +162,15 @@ class CoinMarket:
             if fiat in fiat_suffix:
                 formatted_price = '**{} {}**'.format(converted_price,
                                                      fiat_currencies[fiat])
-                formatted_market_cap = '**{:,} {}**'.format(int(converted_market_cap),
-                                                            fiat_currencies[fiat])
+                if data['market_cap_usd'] is not None:
+                    formatted_market_cap = '**{:,} {}**'.format(int(converted_market_cap),
+                                                                fiat_currencies[fiat])
             else:
                 formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
                                                     converted_price)
-                formatted_market_cap = '**{}{:,}**'.format(fiat_currencies[fiat],
-                                                           int(converted_market_cap))
+                if data['market_cap_usd'] is not None:
+                    formatted_market_cap = '**{}{:,}**'.format(fiat_currencies[fiat],
+                                                               int(converted_market_cap))
             if (data['available_supply'] is None):
                 available_supply = 'Unknown'
             else:
