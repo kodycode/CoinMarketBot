@@ -2,7 +2,6 @@ from bot_logger import logger
 from cogs.modules.coin_market import CoinMarketException, CurrencyException, FiatException
 from collections import defaultdict
 from discord.errors import Forbidden
-from cogs.modules.asyncioplus import limited_as_completed
 import discord
 import json
 
@@ -124,6 +123,12 @@ class SubscriberFunctionality:
             if not valid_time:
                 return None
             if channel_settings["currencies"]:
+                if channel_settings["purge"]:
+                    try:
+                        await self.bot.purge_from(channel,
+                                                  limit=10)
+                    except:
+                        pass
                 return self.coin_market.get_current_multiple_currency(self.market_list,
                                                                       None,
                                                                       self.cache_data,
@@ -140,47 +145,28 @@ class SubscriberFunctionality:
             self._check_invalid_sub_currencies()
             subscriber_list = self.subscriber_data.copy()
             for channel in subscriber_list:
+                first_post = True
                 if channel not in self.cache_channel:
-                    self.cache_channel[channel] = self.bot.get_channel(channel)
-
-            async def get_data(channel, minute):
+                    channel_obj = self.bot.get_channel(channel)
+                    self.cache_channel[channel] = channel_obj
+                else:
+                    channel_obj = self.cache_channel[channel]
                 channel_settings = subscriber_list[channel]
-                data = await self._get_live_data(channel,
+                data = await self._get_live_data(channel_obj,
                                                  channel_settings,
                                                  minute)
-                if not data:
-                    return None
-                return channel, data
-
-            async def post_data(data_set, bot):
-                for data in limited_as_completed(data_set, 10):
-                    first_post = True
-                    try:
-                        data = await data
-                        ch = data[0]
-                        data = data[1]
-                        channel_settings = subscriber_list[ch]
-                        if channel_settings["purge"]:
-                            try:
-                                await bot.purge_from(bot.get_channel(ch),
-                                                     limit=10)
-                            except:
-                                pass
-                        for msg in data:
-                            if first_post:
-                                em = discord.Embed(title="Live Currency Update",
-                                                   description=msg,
-                                                   colour=0xFF9900)
-                                first_post = False
-                            else:
-                                em = discord.Embed(description=msg,
-                                                   colour=0xFF9900)
-                            await self._say_msg(channel=self.cache_channel[ch],
-                                                emb=em)
-                    except TypeError:
-                        pass
-            coros = (get_data(channel, minute) for channel in self.cache_channel)
-            self.bot.loop.create_task(post_data(coros, self.bot))
+                if data:
+                    for msg in data:
+                        if first_post:
+                            em = discord.Embed(title="Live Currency Update",
+                                               description=msg,
+                                               colour=0xFF9900)
+                            first_post = False
+                        else:
+                            em = discord.Embed(description=msg,
+                                               colour=0xFF9900)
+                        await self._say_msg(channel=channel_obj,
+                                            emb=em)
         except CurrencyException as e:
             print("An error has occured. See error.log.")
             logger.error("CurrencyException: {}".format(str(e)))
