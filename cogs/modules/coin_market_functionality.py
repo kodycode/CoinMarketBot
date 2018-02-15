@@ -129,8 +129,6 @@ class CoinMarketFunctionality:
         @param currency_amt - amount of currency coins
         """
         try:
-            acronym1 = ''
-            acronym2 = ''
             if currency1.upper() in self.acronym_list:
                 acronym1 = currency1.upper()
                 currency1 = self.acronym_list[currency1.upper()]
@@ -141,21 +139,22 @@ class CoinMarketFunctionality:
                 currency2 = self.acronym_list[currency2.upper()]
             else:
                 acronym2 = self.market_list[currency2]["symbol"]
-            price_btc1 = float(self.market_list[currency1]['price_btc'])
-            price_btc2 = float(self.market_list[currency2]['price_btc'])
-            btc_amt = float("{:.8f}".format(currency_amt * price_btc1))
-            converted_amt = "{:.8f}".format(btc_amt/price_btc2).rstrip('0')
+            converted_amt = self.coin_market.get_converted_coin_amt(self.market_list,
+                                                                    currency1,
+                                                                    currency2,
+                                                                    currency_amt)
             currency_amt = "{:.8f}".format(currency_amt).rstrip('0')
-            if currency_amt.endswith('.'):
-                currency_amt = currency_amt.replace('.', '')
-            result = "**{} {}** converts to **{} {}**".format(currency_amt,
-                                                              currency1.title(),
-                                                              converted_amt,
-                                                              currency2.title())
-            em = discord.Embed(title="{}({}) to {}({})".format(currency1.title(),
-                                                               acronym1,
-                                                               currency2.title(),
-                                                               acronym2),
+            currency_amt = currency_amt.rstrip('.')
+            result = ("**{} {}** converts to **{} {}**"
+                      "".format(currency_amt,
+                                currency1.title(),
+                                converted_amt,
+                                currency2.title()))
+            em = discord.Embed(title=("{}({}) to {}({})"
+                                      "".format(currency1.title(),
+                                                acronym1,
+                                                currency2.title(),
+                                                acronym2)),
                                description=result,
                                colour=0xFF9900)
             await self.bot.say(embed=em)
