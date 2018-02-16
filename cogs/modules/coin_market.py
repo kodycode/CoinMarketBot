@@ -414,7 +414,7 @@ class CoinMarket:
             data_list.sort(key=lambda x: int(x['rank']))
             for data in data_list:
                 eth_price = self.get_converted_coin_amt(market_list,
-                                                        currency,
+                                                        data['id'],
                                                         ETHEREUM,
                                                         1)
                 if cached_data:
