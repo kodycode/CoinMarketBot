@@ -47,20 +47,20 @@ class CoinMarketFunctionality:
                     await self.bot.say("Don't include spaces in multi-coin search.")
                     return
                 currency_list = currency.split(',')
-                data = self.coin_market.get_current_multiple_currency(self.market_list,
-                                                                      self.acronym_list,
-                                                                      currency_list,
-                                                                      fiat.upper())
-                for msg in data:
-                    if msg_count == 0:
-                        em = discord.Embed(title="Search results",
-                                           description=msg,
-                                           colour=0xFF9900)
-                        msg_count += 1
-                    else:
-                        em = discord.Embed(description=msg,
-                                           colour=0xFF9900)
-                    await self.bot.say(embed=em)
+                # data = self.coin_market.get_current_multiple_currency(self.market_list,
+                #                                                       self.acronym_list,
+                #                                                       currency_list,
+                #                                                       fiat.upper())
+                # for msg in data:
+                #     if msg_count == 0:
+                #         em = discord.Embed(title="Search results",
+                #                            description=msg,
+                #                            colour=0xFF9900)
+                #         msg_count += 1
+                #     else:
+                #         em = discord.Embed(description=msg,
+                #                            colour=0xFF9900)
+                #     await self.bot.say(embed=em)
             else:
                 data, isPositivePercent = self.coin_market.get_current_currency(self.market_list,
                                                                                 self.acronym_list,
