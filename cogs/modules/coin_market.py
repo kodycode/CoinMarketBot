@@ -420,14 +420,14 @@ class CoinMarket:
                 if cached_data:
                     if fiat not in cached_data:
                         cached_data[fiat] = {}
-                    if data['name'] not in cached_data[fiat]:
+                    if data['id'] not in cached_data[fiat]:
                         formatted_msg = self._format_currency_data(data,
                                                                    eth_price,
                                                                    fiat,
                                                                    False)[0]
-                        cached_data[fiat][data['name']] = formatted_msg
+                        cached_data[fiat][data['id']] = formatted_msg
                     else:
-                        formatted_msg = cached_data[fiat][data['name']]
+                        formatted_msg = cached_data[fiat][data['id']]
                 else:
                     formatted_msg = self._format_currency_data(data,
                                                                eth_price,
