@@ -87,12 +87,13 @@ async def process_cmd(message):
     """
     Processes command
     """
-    cmd_input = message.content[1:].split(' ')
-    if cmd_input[0] not in bot.commands:
-        if cmd_input[0] != '':
-            cmd_input.insert(0, "$s")
-            message.content = ' '.join(cmd_input)
-    await bot.process_commands(message)
+    if message.content.startswith('$'):
+        cmd_input = message.content[1:].split(' ')
+        if cmd_input[0] not in bot.commands:
+            if cmd_input[0] != '':
+                cmd_input.insert(0, "$s")
+                message.content = ' '.join(cmd_input)
+        await bot.process_commands(message)
 
 
 async def send_cmd_help(ctx):
