@@ -87,11 +87,11 @@ async def process_cmd(message):
     """
     Processes command
     """
-    if message.content.startswith('$'):
+    if message.content.startswith(config_data["cmd_prefix"]):
         cmd_input = message.content[1:].split(' ')
         if cmd_input[0] not in bot.commands:
             if cmd_input[0] != '':
-                cmd_input.insert(0, "$s")
+                cmd_input.insert(0, "{}s".format(config_data["cmd_prefix"]))
                 message.content = ' '.join(cmd_input)
         await bot.process_commands(message)
 
