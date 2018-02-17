@@ -169,9 +169,6 @@ async def prefix(ctx, prefix: str):
                           "Please make sure this channel is within a "
                           "valid server.")
             return
-        if prefix is prefix_list[server]:
-            await bot.say("This prefix is already set.")
-            return
         prefix_list[server] = prefix
         save_prefix_file(prefix_list)
         msg = "`{}` prefix has been set for bot commands.".format(prefix)
