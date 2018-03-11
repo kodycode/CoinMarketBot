@@ -1,4 +1,5 @@
 from bot_logger import logger
+from bson.json_util import dumps
 from cogs.modules.coin_market import CoinMarketException, CurrencyException, FiatException
 from collections import defaultdict
 from discord.errors import Forbidden
@@ -9,7 +10,9 @@ import json
 class SubscriberFunctionality:
     """Handles Subscriber command Functionality"""
 
-    def __init__(self, bot, coin_market, sub_capacity):
+    def __init__(self, bot, client, coin_market, sub_capacity):
+        self.client = client
+        self.db = client.test
         self.bot = bot
         self.coin_market = coin_market
         self.sub_capacity = int(sub_capacity)
@@ -18,8 +21,7 @@ class SubscriberFunctionality:
         self.cache_data = {}
         self.cache_channel = {}
         self.supported_rates = ["default", "half", "hourly"]
-        self.subscriber_data = self._check_subscriber_file()
-        self._save_subscriber_file(self.subscriber_data, backup=True)
+        self.subscriber_data = self._load_subscriber_data()
 
     def update(self, market_list, acronym_list):
         """
@@ -29,32 +31,27 @@ class SubscriberFunctionality:
         self.acronym_list = acronym_list
         self.cache_data.clear()
 
-    def _check_subscriber_file(self):
+    def _load_subscriber_data(self):
         """
         Checks to see if there's a valid subscribers.json file
         """
+        # Need to create check if collection/db does not exist
         try:
-            with open('subscribers.json') as subscribers:
-                return json.load(subscribers)
-        except FileNotFoundError:
-            self._save_subscriber_file()
-            return json.loads('{}')
+            data = json.loads(dumps(self.db.subscribers.find()))[0]["channel"]
+            data.pop("_id", None)
+            return data
         except Exception as e:
-            print("An error has occured. See error.log.")
+            print("An error has occured loading subscribers. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
-    def _save_subscriber_file(self, subscriber_data={}, backup=False):
+    def _update_subscriber_data(self, channel):
         """
         Saves subscribers.json file
         """
-        if backup:
-            subscriber_filename = "subscribers_backup.json"
-        else:
-            subscriber_filename = "subscribers.json"
-        with open(subscriber_filename, 'w') as outfile:
-            json.dump(subscriber_data,
-                      outfile,
-                      indent=4)
+        result = self.db.subscribers.update_one({"channel.{}".format(channel): {"$exists": True}},
+                                                {"$set": {"channel.{}".format(channel):
+                                                 self.subscriber_data[channel]}})
+        print(result.matched_count)
 
     async def _say_msg(self, msg=None, channel=None, emb=None):
         """
@@ -98,8 +95,7 @@ class SubscriberFunctionality:
                     subscriber_list[channel]["currencies"].remove(currency)
                     logger.error("Removed '{}' from channel {}".format(currency,
                                                                        channel))
-            if remove_currencies:
-                self._save_subscriber_file(self.subscriber_data)
+                self._update_subscriber_data(channel)
         except Exception as e:
             raise CurrencyException("Failed to validate sub "
                                     "currencies: {}".format(str(e)))
@@ -210,7 +206,7 @@ class SubscriberFunctionality:
                 channel_settings["purge"] = False
                 channel_settings["fiat"] = ucase_fiat
                 channel_settings["currencies"] = []
-                self._save_subscriber_file(self.subscriber_data)
+                self._update_subscriber_data(channel)
                 await self._say_msg("Channel has succcesfully subscribed. Now "
                                     "add some currencies with `$addc` to begin "
                                     "receiving updates.")
@@ -231,7 +227,7 @@ class SubscriberFunctionality:
             subscriber_list = self.subscriber_data
             if channel in subscriber_list:
                 subscriber_list.pop(channel)
-                self._save_subscriber_file(self.subscriber_data)
+                self._update_subscriber_data(channel)
                 await self._say_msg("Channel has unsubscribed.")
             else:
                 await self._say_msg("Channel was never subscribed.")
@@ -254,7 +250,7 @@ class SubscriberFunctionality:
                 return
             channel_settings = subscriber_list[channel]
             channel_settings["purge"] = not channel_settings["purge"]
-            self._save_subscriber_file(self.subscriber_data)
+            self._update_subscriber_data(channel)
             if channel_settings["purge"]:
                 await self._say_msg("Purge mode on. Bot will now purge messages upon"
                                     " live updates. Please make sure your bot has "
@@ -324,7 +320,7 @@ class SubscriberFunctionality:
                     await self._say_msg("``{}`` is already added.".format(currency.title()))
                     return
                 channel_settings["currencies"].append(currency)
-                self._save_subscriber_file(self.subscriber_data)
+                self._update_subscriber_data(channel)
                 await self._say_msg("``{}`` was successfully added.".format(currency.title()))
             else:
                 await self._say_msg("The channel needs to be subscribed first.")
@@ -359,7 +355,7 @@ class SubscriberFunctionality:
                 channel_settings = subscriber_list[channel]
                 if currency in channel_settings["currencies"]:
                     channel_settings["currencies"].remove(currency)
-                    self._save_subscriber_file(self.subscriber_data)
+                    self._update_subscriber_data(channel)
                     await self._say_msg("``{}`` was successfully removed."
                                         "".format(currency.title()))
                 else:
@@ -401,7 +397,7 @@ class SubscriberFunctionality:
                     self.subscriber_data[channel]["interval"] = "30"
                 else:
                     self.subscriber_data[channel]["interval"] = "5"
-                self._save_subscriber_file(self.subscriber_data)
+                self._update_subscriber_data(channel)
                 await self._say_msg("Interval is set to **{}**".format(rate))
             else:
                 await self._say_msg("Channel must be subscribed first.")

@@ -3,6 +3,7 @@ from cogs.modules.alert_functionality import AlertFunctionality
 from cogs.modules.coin_market_functionality import CoinMarketFunctionality
 from cogs.modules.coin_market import CoinMarket
 from cogs.modules.subscriber_functionality import SubscriberFunctionality
+from pymongo import MongoClient
 import asyncio
 import datetime
 import discord
@@ -25,12 +26,14 @@ class CoreFunctionality:
         self.market_list = None
         self.market_stats = None
         self.acronym_list = None
+        self.client = MongoClient()
         self.coin_market = CoinMarket()
         self.cmc = CoinMarketFunctionality(bot, self.coin_market)
         self.alert = AlertFunctionality(bot,
                                         self.coin_market,
                                         self.config_data["alert_capacity"])
         self.subscriber = SubscriberFunctionality(bot,
+                                                  self.client,
                                                   self.coin_market,
                                                   self.config_data["subscriber_capacity"])
         self.bot.loop.create_task(self._continuous_updates())
@@ -46,8 +49,8 @@ class CoreFunctionality:
             self.subscriber.update(self.market_list, self.acronym_list)
             await self.update_game_status()
             await self.alert.alert_user()
-            if self.started:
-                await self.subscriber.display_live_data(minute)
+            # if self.started:
+            await self.subscriber.display_live_data(minute)
         except Exception as e:
             print("Failed to update data. See error.log.")
             logger.error("Exception: {}".format(str(e)))
