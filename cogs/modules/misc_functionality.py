@@ -33,7 +33,7 @@ class MiscFunctionality:
                     return False
             return True
         except:
-            pass
+            return True
 
     def update(self, server_data=None):
         """

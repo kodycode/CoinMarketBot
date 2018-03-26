@@ -161,7 +161,7 @@ def _check_permission(ctx):
                 return False
         return True
     except:
-        pass
+        return True
 
 
 def update_server_count(server_count):

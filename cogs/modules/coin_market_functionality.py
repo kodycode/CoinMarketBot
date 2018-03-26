@@ -49,7 +49,7 @@ class CoinMarketFunctionality:
                     return False
             return True
         except:
-            pass
+            return True
 
     async def _say_msg(self, msg=None, channel=None, emb=None):
         """

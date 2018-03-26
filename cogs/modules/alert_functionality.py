@@ -52,7 +52,7 @@ class AlertFunctionality:
                     return False
             return True
         except:
-            pass
+            return True
 
     def _check_alert_file(self):
         """
