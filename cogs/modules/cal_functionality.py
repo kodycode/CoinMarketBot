@@ -91,8 +91,8 @@ class CalFunctionality:
         twitter_acc = event["twitter_account"]
         if event["is_hot"]:
             event["title"] = event["title"] + " :fire:"
-        if twitter_acc is not None:
-            footer = twitter_acc
+        if twitter_acc:
+            footer = "Created by {}".format(twitter_acc)
         msg = ("__**{}**__\n"
                "**{}** (created at {})\n\n"
                "**Description:**\n{}\n\n"
@@ -110,8 +110,10 @@ class CalFunctionality:
                          event["percentage"]))
         em = discord.Embed(title="**Date: {}**".format(date_event),
                            description=msg,
-                           colour=0xFFFFFF,
-                           footer=footer)
+                           colour=0xFFFFFF)
+        em.set_footer(text=footer,
+                      icon_url="https://abs.twimg.com/icons/"
+                               "apple-touch-icon-192x192.png")
         return em
 
     async def display_event(self, ctx, currency, page):
