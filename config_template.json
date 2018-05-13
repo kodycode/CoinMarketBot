@@ -1,6 +1,8 @@
 {
     "cmd_prefix": "$",
     "token": "Enter your Discord token here",
+    "coinmarketcal_client_id": "Enter coinmarketcal client id here",
+    "coinmarketcal_client_secret": "Enter coinmarketcal client secret here",
     "alert_capacity": 10,
     "subscriber_capacity": 300
 }
