@@ -23,7 +23,7 @@ class SubscriberFunctionality:
         self.acronym_list = ""
         self.cache_data = {}
         self.cache_channel = {}
-        self.supported_rates = ["default", "half", "hourly"]
+        self.supported_rates = ["default", "half", "hourly", "24h", "12h", "6h", "3h", "2h"]
         self.subscriber_data = self._check_subscriber_file()
         self._save_subscriber_file(self.subscriber_data, backup=True)
 
@@ -139,8 +139,12 @@ class SubscriberFunctionality:
         try:
             valid_time = True
             if int(minute) != int(channel_settings["interval"]):
-                if int(minute) % int(channel_settings["interval"]) != 0:
-                    valid_time = False
+                try:
+                    if int(minute) % int(channel_settings["interval"]) != 0:
+                        valid_time = False
+                except ZeroDivisionError:
+                    if int(minute) != 0:
+                        valid_time = False
         except KeyError:
             pass
         except Exception as e:
@@ -442,7 +446,18 @@ class SubscriberFunctionality:
                 return
             channel = ctx.message.channel.id
             if channel in self.subscriber_data:
-                if rate == "hourly":
+                # Probably going to re-do this in the future
+                if rate == "24h":
+                    self.subscriber_data[channel]["interval"] = "0"
+                elif rate == "12h":
+                    self.subscriber_data[channel]["interval"] = "720"
+                elif rate == "6h":
+                    self.subscriber_data[channel]["interval"] = "360"
+                elif rate == "3h":
+                    self.subscriber_data[channel]["interval"] = "180"
+                elif rate == "2h":
+                    self.subscriber_data[channel]["interval"] = "120"
+                elif rate == "hourly":
                     self.subscriber_data[channel]["interval"] = "60"
                 elif rate == "half":
                     self.subscriber_data[channel]["interval"] = "30"
