@@ -277,6 +277,7 @@ class AlertFunctionality:
                         alert_btc = alert_setting["unit"]["btc"]
                         if alert_btc.endswith('.'):
                             alert_btc = alert_btc.replace('.', '')
+                            alert_btc = alert_btc.replace(',', '')
                         alert_value = "{} BTC".format(alert_btc)
                 elif "percent" in alert_setting:
                     alert_percent = alert_setting["percent"]
@@ -340,6 +341,7 @@ class AlertFunctionality:
                                 alert_btc = alert_list[alert]["unit"]["btc"]
                                 if alert_btc.endswith('.'):
                                     alert_btc = alert_btc.replace('.', '')
+                                    alert_btc = alert_btc.replace(',', '')
                                 alert_value = "{}".format(alert_btc)
                         elif "percent" in alert_list[alert]:
                             alert_percent = alert_list[alert]["percent"]
