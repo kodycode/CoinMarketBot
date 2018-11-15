@@ -215,10 +215,10 @@ class AlertFunctionality:
                 return
             if kwargs:
                 if "btc" in kwargs:
-                    user_value = "{:,.8f}".format(user_value).rstrip('0')
+                    user_value = "{:.8f}".format(user_value).rstrip('0')
                     if user_value.endswith('.'):
                         user_value = user_value.replace('.', '')
-                    channel_alert["unit"] = {"btc": "{}".format(user_value).rstrip('0')}
+                    channel_alert["unit"] = {"btc": "{}".format(user_value)}
                 else:
                     channel_alert["percent"] = ("{}".format(user_value)).rstrip('0')
                     for arg in kwargs:
