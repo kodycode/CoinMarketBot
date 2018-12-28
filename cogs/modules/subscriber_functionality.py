@@ -440,9 +440,12 @@ class SubscriberFunctionality:
             if rate not in self.supported_rates:
                 await self._say_msg("The rate entered is not supported. "
                                     "Current intervals you can choose are:\n"
-                                    "**default** - every 5 minutes\n"
-                                    "**half** - every 30 minute mark\n"
-                                    "**hourly** - every hour mark\n")
+                                    "**default** - every 60 minutes\n"
+                                    "**2h** - every 2 hours\n"
+                                    "**3h** - every 3 hours\n"
+                                    "**6h** - every 6 hours\n"
+                                    "**12h** - every 12 hours\n"
+                                    "**24h** - every 24 hours\n")
                 return
             channel = ctx.message.channel.id
             if channel in self.subscriber_data:
@@ -457,12 +460,8 @@ class SubscriberFunctionality:
                     self.subscriber_data[channel]["interval"] = "180"
                 elif rate == "2h":
                     self.subscriber_data[channel]["interval"] = "120"
-                elif rate == "hourly":
-                    self.subscriber_data[channel]["interval"] = "60"
-                elif rate == "half":
-                    self.subscriber_data[channel]["interval"] = "30"
                 else:
-                    self.subscriber_data[channel]["interval"] = "5"
+                    self.subscriber_data[channel]["interval"] = "60"
                 self._save_subscriber_file(self.subscriber_data)
                 await self._say_msg("Interval is set to **{}**".format(rate))
             else:
