@@ -29,7 +29,7 @@ class CoreFunctionality:
         self.market_list = None
         self.market_stats = None
         self.acronym_list = None
-        self.coin_market = CoinMarket()
+        self.coin_market = CoinMarket(self.config_data["cmc_api_key"])
         self.server_data = self._check_server_file()
         self.cmc = CoinMarketFunctionality(bot,
                                            self.coin_market,

@@ -44,11 +44,11 @@ class MarketStatsException(Exception):
 class CoinMarket:
     """Handles CoinMarketCap API features"""
 
-    def __init__(self):
+    def __init__(self, api_key):
         """
         Initiates CoinMarket
         """
-        self.market = Market()
+        self.market = Market(api_key)
 
     def fiat_check(self, fiat):
         """
