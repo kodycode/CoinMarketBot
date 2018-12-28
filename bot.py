@@ -160,7 +160,7 @@ def _check_permission(ctx):
             if CMB_ADMIN not in [role.name for role in user_roles]:
                 return False
         return True
-    except:
+    except CoinMarketBotException as e:
         return True
 
 
@@ -171,7 +171,7 @@ def update_server_count(server_count):
         requests.post(DISCORD_BOT_URL,
                       headers=header,
                       data=payload)
-    except:
+    except CoinMarketBotException as e:
         pass
 
 
@@ -190,7 +190,7 @@ async def prefix(ctx, prefix: str):
             return
         try:
             server = str(ctx.message.server.id)
-        except:
+        except CoinMarketBotException as e:
             await bot.say("Failed to create a prefix for the server. "
                           "Please make sure this channel is within a "
                           "valid server.")

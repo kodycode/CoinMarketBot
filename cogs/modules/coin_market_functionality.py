@@ -48,7 +48,7 @@ class CoinMarketFunctionality:
                 if CMB_ADMIN not in [role.name for role in user_roles]:
                     return False
             return True
-        except:
+        except CoinMarketException as e:
             return True
 
     async def _say_msg(self, msg=None, channel=None, emb=None):
@@ -70,7 +70,7 @@ class CoinMarketFunctionality:
                     await self.bot.say(embed=emb)
                 else:
                     await self.bot.say(msg)
-        except:
+        except CoinMarketException as e:
             pass
 
     async def _say_error(self, e):
@@ -81,7 +81,7 @@ class CoinMarketFunctionality:
         """
         try:
             await self.bot.say(e)
-        except:
+        except CoinMarketException as e:
             pass
 
     async def display_search(self, ctx, args):

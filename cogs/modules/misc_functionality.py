@@ -9,6 +9,10 @@ ADMIN_ONLY = "ADMIN_ONLY"
 MISC_DISABLED = "MISC_DISABLED"
 
 
+class MiscFunctionalityException(Exception):
+    """Handles core related errors"""
+
+
 class MiscFunctionality:
     """Handles all Misc command functionality"""
 
@@ -32,7 +36,7 @@ class MiscFunctionality:
                 if CMB_ADMIN not in [role.name for role in user_roles]:
                     return False
             return True
-        except:
+        except MiscFunctionalityException as e:
             return True
 
     def update(self, server_data=None):

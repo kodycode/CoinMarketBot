@@ -158,7 +158,7 @@ class CoreFunctionality:
                 await asyncio.sleep(5)
             market_dict = {}
             for currency in currency_data:
-                market_dict[currency['id']] = currency
+                market_dict[currency['slug']] = currency
             self.market_stats = market_stats
             self.market_list = market_dict
         except CoreFunctionalityException as e:
@@ -221,7 +221,7 @@ class CoreFunctionality:
                     await self.bot.say(embed=emb)
                 else:
                     await self.bot.say(msg)
-        except:
+        except CoreFunctionalityException as e:
             pass
 
     async def display_server_settings(self, ctx):
@@ -231,7 +231,7 @@ class CoreFunctionality:
         try:
             try:
                 ctx.message.channel.server
-            except:
+            except CoreFunctionalityException as e:
                 await self._say_msg("Not a valid server to retrieve settings.")
                 return
             msg = ''
@@ -260,7 +260,7 @@ class CoreFunctionality:
         try:
             try:
                 user_roles = ctx.message.author.roles
-            except:
+            except CoreFunctionalityException as e:
                 await self._say_msg("Command must be used in a server.")
                 return
             if CMB_ADMIN not in [role.name for role in user_roles]:
@@ -270,7 +270,7 @@ class CoreFunctionality:
             channel = ctx.message.channel.id
             try:
                 server = self.bot.get_channel(channel).server  # validate channel
-            except:
+            except CoreFunctionalityException as e:
                 await self._say_msg("Not a valid server to toggle mode.")
                 return
             if server.id not in self.server_data:
