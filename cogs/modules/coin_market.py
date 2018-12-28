@@ -116,7 +116,7 @@ class CoinMarket:
                                     "for spelling errors: {}".format(currency,
                                                                      str(e)))
 
-    def _format_currency_data(self, data, eth_price, fiat, single_search=True):
+    def _format_currency_data(self, data, fiat, single_search=True):
         """
         Formats the data fetched
 
@@ -147,12 +147,12 @@ class CoinMarket:
             converted_price = "{:,.6f}".format(converted_price).rstrip('0')
             if converted_price.endswith('.'):
                 converted_price = converted_price.replace('.', '')
-            formatted_btc = '{:,.8f}'.format(float(data['price_btc'])).rstrip('0')
-            if formatted_btc.endswith('.'):
-                formatted_btc = formatted_btc.replace('.', '')
-            eth_price = eth_price.rstrip('.')
-            if single_search:
-                eth_price += '\n'
+            # formatted_btc = '{:,.8f}'.format(float(data['price_btc'])).rstrip('0')
+            # if formatted_btc.endswith('.'):
+            #     formatted_btc = formatted_btc.replace('.', '')
+            # eth_price = eth_price.rstrip('.')
+            # if single_search:
+            #     eth_price += '\n'
             if data['market_cap_usd'] is None:
                 formatted_market_cap = 'Unknown'
             else:
@@ -182,8 +182,8 @@ class CoinMarket:
             percent_change_7d = '**{}%**'.format(data['percent_change_7d'])
             formatted_data = ("{}\n"
                               "Price ({}): {}\n"
-                              "Price (BTC): **{}**\n"
-                              "Price (ETH): **{}**\n"
+                              # "Price (BTC): **{}**\n"
+                              # "Price (ETH): **{}**\n"
                               "Market Cap ({}): {}\n"
                               "Available Supply: {}\n"
                               "Percent Change (1H): {}\n"
@@ -192,8 +192,8 @@ class CoinMarket:
                               "".format(header,
                                         fiat,
                                         formatted_price,
-                                        formatted_btc,
-                                        eth_price,
+                                        # formatted_btc,
+                                        # eth_price,
                                         fiat,
                                         formatted_market_cap,
                                         available_supply,
@@ -255,8 +255,8 @@ class CoinMarket:
             if currency not in market_list:
                 raise CurrencyException("Invalid currency: `{}`".format(currency))
             data = market_list[currency]
-            eth_price = self.get_converted_coin_amt(market_list, currency, ETHEREUM, 1)
-            formatted_data, isPositivePercent = self._format_currency_data(data, eth_price, fiat)
+            # eth_price = self.get_converted_coin_amt(market_list, currency, ETHEREUM, 1)
+            formatted_data, isPositivePercent = self._format_currency_data(data, fiat)
             return formatted_data, isPositivePercent
         except CurrencyException as e:
             raise
@@ -413,13 +413,13 @@ class CoinMarket:
                                             "".format(currency))
             data_list.sort(key=lambda x: int(x['rank']))
             for data in data_list:
-                eth_price = self.get_converted_coin_amt(market_list,
-                                                        data['id'],
-                                                        ETHEREUM,
-                                                        1)
+                # eth_price = self.get_converted_coin_amt(market_list,
+                #                                         data['id'],
+                #                                         ETHEREUM,
+                #                                         1)
                 if cached_data is None:
                     formatted_msg = self._format_currency_data(data,
-                                                               eth_price,
+                                                               # eth_price,
                                                                fiat,
                                                                False)[0]
                 else:
@@ -428,7 +428,7 @@ class CoinMarket:
                             cached_data[fiat] = {}
                         if data['id'] not in cached_data[fiat]:
                             formatted_msg = self._format_currency_data(data,
-                                                                       eth_price,
+                                                                       # eth_price,
                                                                        fiat,
                                                                        False)[0]
                             cached_data[fiat][data['id']] = formatted_msg
@@ -436,7 +436,7 @@ class CoinMarket:
                             formatted_msg = cached_data[fiat][data['id']]
                     else:
                         formatted_msg = self._format_currency_data(data,
-                                                                   eth_price,
+                                                                   # eth_price,
                                                                    fiat,
                                                                    False)[0]
                         if fiat not in cached_data:
