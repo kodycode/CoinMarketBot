@@ -147,19 +147,19 @@ class CoinMarket:
             if data['quote']['USD']['market_cap'] is None:
                 formatted_market_cap = 'Unknown'
             else:
-                converted_market_cap = price.convert(float(data['quote']['USD']['market_cap_usd']),
+                converted_market_cap = price.convert(float(data['quote']['USD']['market_cap']),
                                                      'USD',
                                                      fiat)
             if fiat in fiat_suffix:
                 formatted_price = '**{} {}**'.format(converted_price,
                                                      fiat_currencies[fiat])
-                if data['quote']['USD']['market_cap_usd'] is not None:
+                if data['quote']['USD']['market_cap'] is not None:
                     formatted_market_cap = '**{:,} {}**'.format(int(converted_market_cap),
                                                                 fiat_currencies[fiat])
             else:
                 formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
                                                     converted_price)
-                if data['quote']['USD']['market_cap_usd'] is not None:
+                if data['quote']['USD']['market_cap'] is not None:
                     formatted_market_cap = '**{}{:,}**'.format(fiat_currencies[fiat],
                                                                int(converted_market_cap))
             if (data['circulating_supply'] is None):
@@ -168,9 +168,9 @@ class CoinMarket:
                 circulating_supply = '**{:,}**'.format(int(float(data['circulating_supply'])))
             if single_search:
                 circulating_supply += '\n'
-            percent_change_1h = '**{}%**'.format(data['percent_change_1h'])
-            percent_change_24h = '**{}%**'.format(data['percent_change_24h'])
-            percent_change_7d = '**{}%**'.format(data['percent_change_7d'])
+            percent_change_1h = '**{}%**'.format(data['quote']['USD']['percent_change_1h'])
+            percent_change_24h = '**{}%**'.format(data['quote']['USD']['percent_change_24h'])
+            percent_change_7d = '**{}%**'.format(data['quote']['USD']['percent_change_7d'])
             formatted_data = ("{}\n"
                               "Price ({}): {}\n"
                               # "Price (BTC): **{}**\n"
@@ -219,7 +219,8 @@ class CoinMarket:
             data = market_list[currency]
             # eth_price = self.get_converted_coin_amt(market_list, currency, ETHEREUM, 1)
             formatted_data, isPositivePercent = self._format_currency_data(data, fiat)
-            return formatted_data, isPositivePercent
+            id_number = market_list[currency]['id']
+            return formatted_data, isPositivePercent, id_number
         except CurrencyException as e:
             raise
         except FiatException as e:
@@ -254,10 +255,10 @@ class CoinMarket:
         try:
             c = CurrencyConverter()
             formatted_stats = ''
-            if stats['quote']['USD']['total_market_cap'] is None:
+            if stats['data']['quote']['USD']['total_market_cap'] is None:
                 formatted_stats += "Total Market Cap (USD): Unknown"
             else:
-                converted_price = int(c.convert(float(stats['quote']['USD']['total_market_cap']), 'USD', fiat))
+                converted_price = int(c.convert(float(stats['data']['quote']['USD']['total_market_cap']), 'USD', fiat))
                 if fiat in fiat_suffix:
                     formatted_stats += "Total Market Cap ({}): **{:,} {}**\n".format(fiat,
                                                                                      converted_price,
@@ -266,22 +267,22 @@ class CoinMarket:
                     formatted_stats += "Total Market Cap ({}): **{}{:,}**\n".format(fiat,
                                                                                     fiat_currencies[fiat],
                                                                                     converted_price)
-            if stats['quote']['USD']['total_volume_24h'] is None:
+            if stats['data']['quote']['USD']['total_volume_24h'] is None:
                 formatted_stats += "Total Volume 24h (USD): Unknown"
             else:
-                converted_price = int(c.convert(float(stats['quote']['USD']['total_volume_24h']), 'USD', fiat))
+                converted_price = int(c.convert(float(stats['data']['quote']['USD']['total_volume_24h']), 'USD', fiat))
                 if fiat in fiat_suffix:
-                    formatted_stats += "Total Volume 24h (USD): **{:,} {}**\n".format(fiat,
-                                                                                      converted_price,
-                                                                                      fiat_currencies[fiat])
+                    formatted_stats += "Total Volume 24h ({}): **{:,} {}**\n".format(fiat,
+                                                                                     converted_price,
+                                                                                     fiat_currencies[fiat])
                 else:
-                    formatted_stats += "Total Volume 24h (USD): **{}{:,}**\n".format(fiat,
-                                                                                     fiat_currencies[fiat],
-                                                                                     converted_price)
-            formatted_stats += "Bitcoin Dominance: **{:,}%**\n".format(stats['btc_dominance'])
-            formatted_stats += "Ethereum Dominance: **{:,}%**\n".format(stats['eth_dominance'])
-            formatted_stats += "Active Exchanges: **{:,}**\n".format(stats['active_exchanges'])
-            formatted_stats += "Active Currencies: **{:,}**\n".format(stats['active_cryptocurrencies'])
+                    formatted_stats += "Total Volume 24h ({}): **{}{:,}**\n".format(fiat,
+                                                                                    fiat_currencies[fiat],
+                                                                                    converted_price)
+            formatted_stats += "Bitcoin Dominance: **{}%**\n".format(stats['data']['btc_dominance'])
+            formatted_stats += "Ethereum Dominance: **{}%**\n".format(stats['data']['eth_dominance'])
+            formatted_stats += "Active Exchanges: **{:,}**\n".format(stats['data']['active_exchanges'])
+            formatted_stats += "Active Currencies: **{:,}**\n".format(stats['data']['active_cryptocurrencies'])
             return formatted_stats
         except Exception as e:
             raise CoinMarketException("Failed to format data: `{}`".format(e))
@@ -334,7 +335,7 @@ class CoinMarket:
                 except Exception as e:
                     raise CurrencyException("Invalid currency: `{}`"
                                             "".format(currency))
-            data_list.sort(key=lambda x: int(x['rank']))
+            data_list.sort(key=lambda x: int(x['cmc_rank']))
             for data in data_list:
                 # eth_price = self.get_converted_coin_amt(market_list,
                 #                                         data['id'],

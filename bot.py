@@ -160,7 +160,7 @@ def _check_permission(ctx):
             if CMB_ADMIN not in [role.name for role in user_roles]:
                 return False
         return True
-    except CoinMarketBotException as e:
+    except Exception as e:
         return True
 
 
@@ -171,7 +171,7 @@ def update_server_count(server_count):
         requests.post(DISCORD_BOT_URL,
                       headers=header,
                       data=payload)
-    except CoinMarketBotException as e:
+    except Exception as e:
         pass
 
 

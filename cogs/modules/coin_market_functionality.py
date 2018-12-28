@@ -125,10 +125,10 @@ class CoinMarketFunctionality:
                                                colour=0xFF9900)
                         await self.bot.say(embed=em)
                     return
-            data, isPositivePercent = self.coin_market.get_current_currency(self.market_list,
-                                                                            self.acronym_list,
-                                                                            currency,
-                                                                            fiat)
+            data, isPositivePercent, id = self.coin_market.get_current_currency(self.market_list,
+                                                                                self.acronym_list,
+                                                                                currency,
+                                                                                fiat)
             if isPositivePercent:
                 em = discord.Embed(title="Search results",
                                    description=data,
@@ -137,6 +137,7 @@ class CoinMarketFunctionality:
                 em = discord.Embed(title="Search results",
                                    description=data,
                                    colour=0xD14836)
+            em.set_thumbnail(url='https://s2.coinmarketcap.com/static/img/coins/128x128/{}.png'.format(id))
             await self.bot.say(embed=em)
         except Forbidden:
             pass
@@ -242,7 +243,7 @@ class CoinMarketFunctionality:
             if currency.upper() in self.acronym_list:
                 currency = self.acronym_list[currency.upper()]
             data = self.market_list[currency]
-            current_cost = float(data['price_usd'])
+            current_cost = float(data['quote']['USD']['price'])
             fiat_cost = self.coin_market.format_price(currency_amt*current_cost,
                                                       ucase_fiat)
             currency = currency.title()
@@ -283,7 +284,7 @@ class CoinMarketFunctionality:
             if currency.upper() in self.acronym_list:
                 currency = self.acronym_list[currency.upper()]
             data = self.market_list[currency]
-            current_cost = float(data['price_usd'])
+            current_cost = float(data['quote']['USD']['price'])
             amt_of_coins = "{:.8f}".format(price/current_cost)
             amt_of_coins = amt_of_coins.rstrip('0')
             price = self.coin_market.format_price(price, ucase_fiat)
@@ -326,7 +327,7 @@ class CoinMarketFunctionality:
             if currency.upper() in self.acronym_list:
                 currency = self.acronym_list[currency.upper()]
             data = self.market_list[currency]
-            current_cost = float(data['price_usd'])
+            current_cost = float(data['quote']['USD']['price'])
             initial_investment = float(currency_amt)*float(cost)
             profit = float((float(currency_amt)*current_cost) - initial_investment)
             overall_investment = float(initial_investment + profit)

@@ -11,10 +11,6 @@ ADMIN_ONLY = "ADMIN_ONLY"
 SUBSCRIBER_DISABLED = "SUBSCRIBER_DISABLED"
 
 
-class SubscriberFunctionalityException(Exception):
-    """Handles core related errors"""
-
-
 class SubscriberFunctionality:
     """Handles Subscriber command Functionality"""
 
@@ -58,7 +54,7 @@ class SubscriberFunctionality:
                 if CMB_ADMIN not in [role.name for role in user_roles]:
                     return False
             return True
-        except SubscriberFunctionalityException as e:
+        except Exception as e:
             return True
 
     def _check_subscriber_file(self):
@@ -107,7 +103,7 @@ class SubscriberFunctionality:
                     await self.bot.say(embed=emb)
                 else:
                     await self.bot.say(msg)
-        except SubscriberFunctionalityException as e:
+        except Exception as e:
             pass
 
     def _check_invalid_sub_currencies(self):
@@ -163,7 +159,7 @@ class SubscriberFunctionality:
                     try:
                         await self.bot.purge_from(channel,
                                                   limit=10)
-                    except SubscriberFunctionalityException as e:
+                    except Exception as e:
                         pass
                 return self.coin_market.get_current_multiple_currency(self.market_list,
                                                                       None,
@@ -236,7 +232,7 @@ class SubscriberFunctionality:
             subscriber_list = self.subscriber_data
             try:
                 self.bot.get_channel(channel).server  # validate channel
-            except SubscriberFunctionalityException as e:
+            except Exception as e:
                 await self._say_msg("Failed to add channel as a subscriber. "
                                     " Please make sure this channel is within a "
                                     "valid server.")
@@ -342,7 +338,7 @@ class SubscriberFunctionality:
                                    description=msg,
                                    colour=color)
                 await self._say_msg(emb=em)
-            except SubscriberFunctionalityException as e:
+            except Exception as e:
                 pass
         except Forbidden:
             pass

@@ -11,10 +11,6 @@ ADMIN_ONLY = "ADMIN_ONLY"
 ALERT_DISABLED = "ALERT_DISABLED"
 
 
-class AlertFunctionalityException(Exception):
-    """Handles alert related errors"""
-
-
 class AlertFunctionality:
     """Handles Alert Command functionality"""
 
@@ -107,17 +103,18 @@ class AlertFunctionality:
         if currency in self.market_list:
             if kwargs:
                 if "btc" in kwargs:
-                    market_value = float(self.market_list[currency]["price_btc"])
-                elif "hour" in kwargs:
-                    market_value = float(self.market_list[currency]["percent_change_1h"])
+                    # market_value = float(self.market_list[currency]['quote']['BTC']["price"])
+                    return False  # temporarily disabled
+                if "hour" in kwargs:
+                    market_value = float(self.market_list[currency]['quote']['USD']["percent_change_1h"])
                 elif "day" in kwargs:
-                    market_value = float(self.market_list[currency]["percent_change_24h"])
+                    market_value = float(self.market_list[currency]['quote']['USD']["percent_change_24h"])
                 elif "week" in kwargs:
-                    market_value = float(self.market_list[currency]["percent_change_7d"])
+                    market_value = float(self.market_list[currency]['quote']['USD']["percent_change_7d"])
                 else:
                     raise Exception("Unsupported percent change format.")
             else:
-                market_value = float(self.market_list[currency]["price_usd"])
+                market_value = float(self.market_list[currency]['quote']['USD']["price"])
                 market_value = float(self.coin_market.format_price(market_value,
                                                                    fiat,
                                                                    False))
@@ -159,7 +156,7 @@ class AlertFunctionality:
                     await self.bot.say(embed=emb)
                 else:
                     await self.bot.say(msg)
-        except AlertFunctionalityException as e:
+        except Exception as e:
             pass
 
     async def add_alert(self, ctx, currency, operator, user_value, fiat, **kwargs):

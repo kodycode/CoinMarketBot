@@ -12,10 +12,6 @@ MONTHS = ["January", "February", "March",
           "October", "November", "December"]
 
 
-class CalFunctionalityException(Exception):
-    """Handles core related errors"""
-
-
 class CalFunctionality:
     """Handles coinmarketcal functionality"""
 
@@ -41,7 +37,7 @@ class CalFunctionality:
                 if CMB_ADMIN not in [role.name for role in user_roles]:
                     return False
             return True
-        except CalFunctionalityException as e:
+        except Exception as e:
             return True
 
     def update(self, acronym_list=None, server_data=None):
@@ -72,7 +68,7 @@ class CalFunctionality:
                     await self.bot.say(embed=emb)
                 else:
                     await self.bot.say(msg)
-        except CalFunctionalityException as e:
+        except Exception as e:
             pass
 
     def format_events(self, coin, event):
@@ -131,7 +127,7 @@ class CalFunctionality:
                 currency = self.acronym_list[currency.upper()]
             try:
                 event = self.cal.get_coin_event(currency, page)[0]
-            except CalFunctionalityException as e:
+            except Exception as e:
                 await self.bot.say("No event available for the following "
                                    "currency: **{}**".format(currency))
                 return

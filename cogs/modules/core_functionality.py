@@ -123,7 +123,7 @@ class CoreFunctionality:
         logger.info('Bot is online.')
         while True:
             time = datetime.datetime.now()
-            if (time.minute + 1) % 60 == 0:
+            if time.minute == 0:
                 minute = (time.hour * 60) + time.minute
                 await self._update_data(minute)
                 await asyncio.sleep(60)
@@ -139,7 +139,7 @@ class CoreFunctionality:
         try:
             retry_count = 0
             market_stats = self.coin_market.fetch_coinmarket_stats()
-            currency_data = self.coin_market.fetch_currency_data(load_all=True)
+            currency_data = self.coin_market.fetch_currency_data()
             while market_stats is None or currency_data is None:
                 if retry_count >= 10:
                     msg = ("Max retry attempts reached. Please make "
@@ -153,16 +153,14 @@ class CoreFunctionality:
                 if market_stats is None:
                     market_stats = self.coin_market.fetch_coinmarket_stats()
                 if currency_data is None:
-                    currency_data = self.coin_market.fetch_currency_data(load_all=True)
+                    currency_data = self.coin_market.fetch_currency_data()
                 retry_count += 1
                 await asyncio.sleep(5)
             market_dict = {}
-            for currency in currency_data:
+            for currency in currency_data['data']:
                 market_dict[currency['slug']] = currency
             self.market_stats = market_stats
             self.market_list = market_dict
-        except CoreFunctionalityException as e:
-            logger.error(str(e))
         except Exception as e:
             print("Failed to update market. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -221,7 +219,7 @@ class CoreFunctionality:
                     await self.bot.say(embed=emb)
                 else:
                     await self.bot.say(msg)
-        except CoreFunctionalityException as e:
+        except Exception as e:
             pass
 
     async def display_server_settings(self, ctx):
@@ -231,7 +229,7 @@ class CoreFunctionality:
         try:
             try:
                 ctx.message.channel.server
-            except CoreFunctionalityException as e:
+            except Exception as e:
                 await self._say_msg("Not a valid server to retrieve settings.")
                 return
             msg = ''
@@ -260,7 +258,7 @@ class CoreFunctionality:
         try:
             try:
                 user_roles = ctx.message.author.roles
-            except CoreFunctionalityException as e:
+            except Exception as e:
                 await self._say_msg("Command must be used in a server.")
                 return
             if CMB_ADMIN not in [role.name for role in user_roles]:
@@ -270,7 +268,7 @@ class CoreFunctionality:
             channel = ctx.message.channel.id
             try:
                 server = self.bot.get_channel(channel).server  # validate channel
-            except CoreFunctionalityException as e:
+            except Exception as e:
                 await self._say_msg("Not a valid server to toggle mode.")
                 return
             if server.id not in self.server_data:
