@@ -3,7 +3,7 @@
 [![Discord Bots](https://discordbots.org/api/widget/servers/353373501274456065.svg?noavatar=true)](https://discordbots.org/bot/353373501274456065)
 [![Discord Bots](https://discordbots.org/api/widget/upvotes/353373501274456065.svg?noavatar=true)](https://discordbots.org/bot/353373501274456065)
 # CoinMarketBot
-___**[12/27/2018] Bot is currently down for updates, please see https://github.com/kodycode/CoinMarketDiscordBot/wiki/Updates**___
+___**[12/29/2018] Bot is back up, please see https://github.com/kodycode/CoinMarketDiscordBot/wiki/Updates on changes**___
 
 A Discord bot that sends constant cryptocurrency updates to text-channel subscribers and can create alert notifications.
 
@@ -35,6 +35,9 @@ Stay tuned for more features.
 
 ## Donations:
 All donations are greatly appreciated and they help very much with maintaining the live bot:
+
+[Patreon Page Here](https://www.patreon.com/coinmarketbot)
+
 ```
 ETH: 0x13318b2A795940D119b999ECfe827708131fA3f6
 LTC: LiChyn9o9VhppANUHDhe6ReFjGoGhLqtZm
