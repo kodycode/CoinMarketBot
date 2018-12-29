@@ -128,11 +128,11 @@ class CoinMarket:
                 else:
                     hour_trend = SMALL_RED_TRIANGLE
                     isPositivePercent = False
-            header = "[__**#{}. {} ({})**__ {}](https://coinmarketcap.com/currencies/{})".format(data['slug'],
-                                                                                                 data['cmc_rank'],
+            header = "[__**#{}. {} ({})**__ {}](https://coinmarketcap.com/currencies/{})".format(data['cmc_rank'],
                                                                                                  data['name'],
                                                                                                  data['symbol'],
-                                                                                                 hour_trend)
+                                                                                                 hour_trend,
+                                                                                                 data['slug'])
             converted_price = float(price.convert(float(data['quote']['USD']['price']),
                                                   'USD',
                                                   fiat))
@@ -151,11 +151,20 @@ class CoinMarket:
                 converted_market_cap = price.convert(float(data['quote']['USD']['market_cap']),
                                                      'USD',
                                                      fiat)
+            if data['quote']['USD']['volume_24h'] is None:
+                formatted_volume_24h = 'Unknown'
+            else:
+                converted_volume_24h = price.convert(float(data['quote']['USD']['volume_24h']),
+                                                     'USD',
+                                                     fiat)
             if fiat in fiat_suffix:
                 formatted_price = '**{} {}**'.format(converted_price,
                                                      fiat_currencies[fiat])
                 if data['quote']['USD']['market_cap'] is not None:
                     formatted_market_cap = '**{:,} {}**'.format(int(converted_market_cap),
+                                                                fiat_currencies[fiat])
+                if data['quote']['USD']['volume_24h'] is not None:
+                    formatted_volume_24h = '**{:,} {}**'.format(int(converted_volume_24h),
                                                                 fiat_currencies[fiat])
             else:
                 formatted_price = '**{}{}**'.format(fiat_currencies[fiat],
@@ -163,12 +172,20 @@ class CoinMarket:
                 if data['quote']['USD']['market_cap'] is not None:
                     formatted_market_cap = '**{}{:,}**'.format(fiat_currencies[fiat],
                                                                int(converted_market_cap))
+                if data['quote']['USD']['volume_24h'] is not None:
+                    formatted_volume_24h = '**{}{:,}**'.format(fiat_currencies[fiat],
+                                                               int(converted_volume_24h))
             if (data['circulating_supply'] is None):
                 circulating_supply = 'Unknown'
             else:
                 circulating_supply = '**{:,}**'.format(int(float(data['circulating_supply'])))
+            if (data['max_supply'] is None):
+                max_supply = 'Unknown'
+            else:
+                max_supply = '**{:,}**'.format(int(float(data['max_supply'])))
             if single_search:
-                circulating_supply += '\n'
+                formatted_volume_24h += '\n'
+                max_supply += '\n'
             percent_change_1h = '**{}%**'.format(data['quote']['USD']['percent_change_1h'])
             percent_change_24h = '**{}%**'.format(data['quote']['USD']['percent_change_24h'])
             percent_change_7d = '**{}%**'.format(data['quote']['USD']['percent_change_7d'])
@@ -177,7 +194,9 @@ class CoinMarket:
                               # "Price (BTC): **{}**\n"
                               # "Price (ETH): **{}**\n"
                               "Market Cap ({}): {}\n"
+                              "Volume 24h ({}): {}\n"
                               "Circulating Supply: {}\n"
+                              "Max Supply: {}\n"
                               "Percent Change (1H): {}\n"
                               "Percent Change (24H): {}\n"
                               "Percent Change (7D): {}\n"
@@ -188,7 +207,10 @@ class CoinMarket:
                                         # eth_price,
                                         fiat,
                                         formatted_market_cap,
+                                        fiat,
+                                        formatted_volume_24h,
                                         circulating_supply,
+                                        max_supply,
                                         percent_change_1h,
                                         percent_change_24h,
                                         percent_change_7d))
