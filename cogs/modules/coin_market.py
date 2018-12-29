@@ -128,10 +128,11 @@ class CoinMarket:
                 else:
                     hour_trend = SMALL_RED_TRIANGLE
                     isPositivePercent = False
-            header = "__**#{}. {} ({})**__ {}".format(data['cmc_rank'],
-                                                      data['name'],
-                                                      data['symbol'],
-                                                      hour_trend)
+            header = "[__**#{}. {} ({})**__ {}](https://coinmarketcap.com/currencies/{})".format(data['slug'],
+                                                                                                 data['cmc_rank'],
+                                                                                                 data['name'],
+                                                                                                 data['symbol'],
+                                                                                                 hour_trend)
             converted_price = float(price.convert(float(data['quote']['USD']['price']),
                                                   'USD',
                                                   fiat))
