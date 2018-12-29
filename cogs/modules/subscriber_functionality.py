@@ -23,7 +23,7 @@ class SubscriberFunctionality:
         self.acronym_list = ""
         self.cache_data = {}
         self.cache_channel = {}
-        self.supported_rates = ["default", "half", "hourly", "24h", "12h", "6h", "3h", "2h"]
+        self.supported_rates = ["default", "24h", "12h", "6h", "3h", "2h"]
         self.subscriber_data = self._check_subscriber_file()
         self._save_subscriber_file(self.subscriber_data, backup=True)
 
@@ -440,7 +440,7 @@ class SubscriberFunctionality:
             if rate not in self.supported_rates:
                 await self._say_msg("The rate entered is not supported. "
                                     "Current intervals you can choose are:\n"
-                                    "**default** - every 60 minutes\n"
+                                    "**default** - every hour\n"
                                     "**2h** - every 2 hours\n"
                                     "**3h** - every 3 hours\n"
                                     "**6h** - every 6 hours\n"
