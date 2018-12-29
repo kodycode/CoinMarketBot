@@ -34,6 +34,15 @@ class MiscCommands:
         """
         await self.cmd_function.misc.display_donation_option(ctx)
 
+    @commands.command(name="patreon", pass_context=True)
+    async def patreon(self, ctx):
+        """
+        Shows patreon page
+        An example for this command would be:
+        "$patreon"
+        """
+        await self.cmd_function.misc.display_patreon_page(ctx)
+
     @commands.command(name="info", pass_context=True)
     async def info(self, ctx):
         """

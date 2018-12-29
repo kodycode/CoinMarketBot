@@ -84,6 +84,19 @@ class MiscFunctionality:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
+    async def display_patreon_page(self, ctx):
+        """
+        Displays patreon page
+        """
+        try:
+            if not self._check_permission(ctx):
+                return
+            msg = ("https://patreon.com/coinmarketbot")
+            await self.bot.say(msg)
+        except Exception as e:
+            print("An error has occured. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
+        
     async def display_info(self, ctx):
         """
         Displays information about the bot
