@@ -96,7 +96,7 @@ class MiscFunctionality:
         except Exception as e:
             print("An error has occured. See error.log.")
             logger.error("Exception: {}".format(str(e)))
-        
+
     async def display_info(self, ctx):
         """
         Displays information about the bot

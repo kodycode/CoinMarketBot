@@ -35,6 +35,20 @@ class CoinMarketCommands:
         """
         await self.cmd_function.cmc.display_search(ctx, args)
 
+    @commands.command(name='topfive', pass_context=True)
+    async def top(self, ctx, option=None, fiat='USD'):
+        """
+        Displays the top 5 cryptocurrencies (out of first 400
+        cryptocurrencies) depending on the following options:
+        g - display cryptocurrencies with top 5 24h percent gains
+        l - display cryptocurrencies with top 5 24h percent losses
+        r - display cryptocurrencies with top 5 ranking
+
+        @param option - 'g', 'l', or 'r'
+        @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
+        """
+        await self.cmd_function.cmc.display_top_currencies(ctx, option, fiat)
+
     @commands.command(name='stats', pass_context=True)
     async def stats(self, ctx, fiat='USD'):
         """

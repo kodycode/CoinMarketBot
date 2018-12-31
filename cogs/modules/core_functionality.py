@@ -12,6 +12,8 @@ import json
 
 
 CMB_ADMIN = "CMB ADMIN"
+MAX_TOP_CURRENCY_DISPLAY = 5
+LIMIT_TOP_CURRENCY = 400
 
 
 class CoreFunctionalityException(Exception):
@@ -29,6 +31,9 @@ class CoreFunctionality:
         self.market_list = None
         self.market_stats = None
         self.acronym_list = None
+        self.top_five = []
+        self.top_five_gains = []
+        self.top_five_losses = []
         self.coin_market = CoinMarket(self.config_data["cmc_api_key"])
         self.server_data = self._check_server_file()
         self.cmc = CoinMarketFunctionality(bot,
@@ -93,7 +98,10 @@ class CoreFunctionality:
             self._load_acronyms()
             self.cmc.update(self.market_list,
                             self.acronym_list,
-                            self.market_stats)
+                            self.market_stats,
+                            top_five=self.top_five,
+                            top_five_gains=self.top_five_gains,
+                            top_five_losses=self.top_five_losses)
             self.alert.update(self.market_list, self.acronym_list)
             self.subscriber.update(self.market_list, self.acronym_list)
             self.cal.update(self.acronym_list)
@@ -159,10 +167,30 @@ class CoreFunctionality:
             market_dict = {}
             for currency in currency_data['data']:
                 market_dict[currency['slug']] = currency
+            await self._get_top_five(currency_data['data'])
             self.market_stats = market_stats
             self.market_list = market_dict
         except Exception as e:
             print("Failed to update market. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
+
+    async def _get_top_five(self, currency_data):
+        """
+        Obtains the top five currencies in the ranking, % gain/loss
+        """
+        try:
+            currency_data = currency_data[:LIMIT_TOP_CURRENCY]
+            for i in range(0, MAX_TOP_CURRENCY_DISPLAY):
+                self.top_five.append(currency_data[i]['slug'])
+            sorted_by_loss = sorted(currency_data, key=lambda c: float(c['quote']['USD']['percent_change_24h']))
+            for i in range(0, MAX_TOP_CURRENCY_DISPLAY):
+                self.top_five_losses.append(sorted_by_loss[i]['slug'])
+            sorted_by_gains = sorted(currency_data, key=lambda c: float(c['quote']['USD']['percent_change_24h']),
+                                     reverse=True)
+            for i in range(0, MAX_TOP_CURRENCY_DISPLAY):
+                self.top_five_gains.append(sorted_by_gains[i]['slug'])
+        except Exception as e:
+            print("Failed to get the top five currencies. See error.log.")
             logger.error("Exception: {}".format(str(e)))
 
     def _load_acronyms(self):

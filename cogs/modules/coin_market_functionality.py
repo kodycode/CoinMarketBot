@@ -18,9 +18,12 @@ class CoinMarketFunctionality:
         self.acronym_list = ""
         self.market_list = ""
         self.market_stats = ""
+        self.top_five = []
+        self.top_five_gains = []
+        self.top_five_losses = []
         self.coin_market = coin_market
 
-    def update(self, market_list=None, acronym_list=None, market_stats=None, server_data=None):
+    def update(self, market_list=None, acronym_list=None, market_stats=None, server_data=None, top_five=None, top_five_gains=None, top_five_losses=None):
         """
         Updates utilities with new coin market and server data
         """
@@ -32,6 +35,12 @@ class CoinMarketFunctionality:
             self.acronym_list = acronym_list
         if market_stats:
             self.market_stats = market_stats
+        if top_five:
+            self.top_five = top_five
+        if top_five_gains:
+            self.top_five_gains = top_five_gains
+        if top_five_losses:
+            self.top_five_losses = top_five_losses
 
     def _check_permission(self, ctx):
         """
@@ -84,6 +93,58 @@ class CoinMarketFunctionality:
         except Exception as e:
             pass
 
+    async def display_top_currencies(self, ctx, option, fiat):
+        """
+        Obtains stats of the top five cryptocurrencies that have the
+        highest % gains of all cryptocurrencies
+
+        @param option - user specifies 'g', 'l', or nothing
+        """
+        try:
+            first_post = True
+            if not self._check_permission(ctx):
+                return
+            if option == 'g' or option == 'gains':
+                title_msg = "Top Five Gains"
+                data = self.coin_market.get_current_multiple_currency(self.market_list,
+                                                                      self.acronym_list,
+                                                                      self.top_five_gains,
+                                                                      fiat)[0]
+            elif option == 'l' or option == 'loss':
+                title_msg = "Top Five Losses"
+                data = self.coin_market.get_current_multiple_currency(self.market_list,
+                                                                      self.acronym_list,
+                                                                      self.top_five_losses,
+                                                                      fiat)[0]
+            elif option == 'r' or option == 'rank':
+                title_msg = "Top Five Ranks"
+                data = self.coin_market.get_current_multiple_currency(self.market_list,
+                                                                      self.acronym_list,
+                                                                      self.top_five,
+                                                                      fiat)[0]
+            else:
+                await self._say_msg(msg='```Please enter a valid option:\n'
+                                        'g - display top 5 cryptocurrencies with highest 24h percent gains\n'
+                                        'l - display top 5 cryptocurrencies with highest 24h percent losses\n'
+                                        'r - display cryptocurrencies with top 5 ranking```')
+                return
+            for msg in data:
+                if first_post:
+                    em = discord.Embed(title=title_msg,
+                                       description=msg,
+                                       colour=0xFF9900)
+                    first_post = False
+                else:
+                    em = discord.Embed(description=msg,
+                                       colour=0xFF9900)
+                await self._say_msg(emb=em)
+        except CoinMarketException as e:
+            print("An error has occured. See error.log.")
+            logger.error("CoinMarketException: {}".format(str(e)))
+        except Exception as e:
+            print("An error has occured. See error.log.")
+            logger.error("Exception: {}".format(str(e)))
+
     async def display_search(self, ctx, args):
         """
         Embeds search results and displays it in chat.
@@ -123,7 +184,7 @@ class CoinMarketFunctionality:
                         else:
                             em = discord.Embed(description=msg,
                                                colour=0xFF9900)
-                        await self.bot.say(embed=em)
+                        await self._say_msg(emb=em)
                     return
             data, isPositivePercent, id = self.coin_market.get_current_currency(self.market_list,
                                                                                 self.acronym_list,
