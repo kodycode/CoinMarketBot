@@ -51,7 +51,7 @@ class AlertFunctionality:
                 if CMB_ADMIN not in [role.name for role in user_roles]:
                     return False
             return True
-        except AlertFunctionality:
+        except Exception:
             return True
 
     def _check_alert_file(self):
@@ -156,7 +156,7 @@ class AlertFunctionality:
                     await self.bot.say(embed=emb)
                 else:
                     await self.bot.say(msg)
-        except Exception as e:
+        except Exception:
             pass
 
     async def add_alert(self, ctx, currency, operator, user_value, fiat, **kwargs):
