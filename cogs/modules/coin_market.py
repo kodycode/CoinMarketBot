@@ -394,7 +394,7 @@ class CoinMarket:
                     result_msg += "{}\n".format(formatted_msg)
                 else:
                     formatted_data.append(result_msg)
-                    result_msg = formatted_msg
+                    result_msg = "{}\n".format(formatted_msg)
             formatted_data.append(result_msg)
             return formatted_data, cached_data
         except CurrencyException as e:
