@@ -102,6 +102,7 @@ class CoinMarketFunctionality:
         """
         try:
             first_post = True
+            option = option.lower()
             if not self._check_permission(ctx):
                 return
             if option == 'g' or option == 'gains':
