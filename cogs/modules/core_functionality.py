@@ -180,6 +180,12 @@ class CoreFunctionality:
         """
         try:
             currency_data = currency_data[:LIMIT_TOP_CURRENCY]
+            if self.top_five:
+                self.top_five.clear()
+            if self.top_five_gains:
+                self.top_five_gains.clear()
+            if self.top_five_losses:
+                self.top_five_losses.clear()
             for i in range(0, MAX_TOP_CURRENCY_DISPLAY):
                 self.top_five.append(currency_data[i]['slug'])
             sorted_by_loss = sorted(currency_data, key=lambda c: float(c['quote']['USD']['percent_change_24h']))
