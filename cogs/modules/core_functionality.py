@@ -1,6 +1,6 @@
 from bot_logger import logger
 from cogs.modules.alert_functionality import AlertFunctionality
-from cogs.modules.cal_functionality import CalFunctionality
+# from cogs.modules.cal_functionality import CalFunctionality
 from cogs.modules.coin_market_functionality import CoinMarketFunctionality
 from cogs.modules.coin_market import CoinMarket
 from cogs.modules.misc_functionality import MiscFunctionality
@@ -47,9 +47,9 @@ class CoreFunctionality:
                                                   self.coin_market,
                                                   self.config_data["subscriber_capacity"],
                                                   self.server_data)
-        self.cal = CalFunctionality(bot,
-                                    self.config_data,
-                                    self.server_data)
+        # self.cal = CalFunctionality(bot,
+        #                             self.config_data,
+        #                             self.server_data)
         self.misc = MiscFunctionality(bot, self.server_data)
         self._save_server_file(self.server_data, backup=True)
         self.bot.loop.create_task(self._continuous_updates())
@@ -87,7 +87,7 @@ class CoreFunctionality:
             self.alert.update(server_data=self.server_data)
             self.subscriber.update(server_data=self.server_data)
             self.misc.update(server_data=self.server_data)
-            self.cal.update(server_data=self.server_data)
+            # self.cal.update(server_data=self.server_data)
         except Exception as e:
             print("Failed to update server data. See error.log.")
             logger.error("Exception: {}".format(str(e)))
@@ -104,7 +104,7 @@ class CoreFunctionality:
                             top_five_losses=self.top_five_losses)
             self.alert.update(self.market_list, self.acronym_list)
             self.subscriber.update(self.market_list, self.acronym_list)
-            self.cal.update(self.acronym_list)
+            # self.cal.update(self.acronym_list)
             await self._update_game_status()
             await self.alert.alert_user()
             if self.started:
