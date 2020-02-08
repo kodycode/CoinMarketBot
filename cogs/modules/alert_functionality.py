@@ -105,9 +105,7 @@ class AlertFunctionality:
                 if "btc" in kwargs:
                     # market_value = float(self.market_list[currency]['quote']['BTC']["price"])
                     return False  # temporarily disabled
-                if "hour" in kwargs:
-                    market_value = float(self.market_list[currency]['quote']['USD']["percent_change_1h"])
-                elif "day" in kwargs:
+                if "day" in kwargs:
                     market_value = float(self.market_list[currency]['quote']['USD']["percent_change_24h"])
                 elif "week" in kwargs:
                     market_value = float(self.market_list[currency]['quote']['USD']["percent_change_7d"])
@@ -285,9 +283,7 @@ class AlertFunctionality:
                     if alert_percent.endswith('.'):
                         alert_percent = alert_percent.replace('.', '')
                     alert_value = "{}%".format(alert_percent)
-                    if "hour" == alert_setting["percent_change"]:
-                        alert_value += " (1H)"
-                    elif "day" == alert_setting["percent_change"]:
+                    if "day" == alert_setting["percent_change"]:
                         alert_value += " (24H)"
                     elif "week" == alert_setting["percent_change"]:
                         alert_value += " (7D)"
@@ -361,9 +357,7 @@ class AlertFunctionality:
                             if "btc" in alert_list[alert]["unit"]:
                                 msg[int(alert)] += "**BTC**\n"
                         elif "percent_change" in alert_list[alert]:
-                            if "hour" == alert_list[alert]["percent_change"]:
-                                msg[int(alert)] += "(**1H**)\n"
-                            elif "day" == alert_list[alert]["percent_change"]:
+                            if "day" == alert_list[alert]["percent_change"]:
                                 msg[int(alert)] += "(**24H**)\n"
                             elif "week" == alert_list[alert]["percent_change"]:
                                 msg[int(alert)] += "(**7D**)\n"
@@ -398,6 +392,7 @@ class AlertFunctionality:
         cryptocurrency price
         """
         try:
+            display_msg = True
             kwargs = {}
             raised_alerts = defaultdict(list)
             for user in self.alert_data:
@@ -438,9 +433,7 @@ class AlertFunctionality:
                                 if "btc" in alert_list[alert]["unit"]:
                                     msg += " **BTC**\n"
                             elif "percent_change" in alert_list[alert]:
-                                if "hour" == alert_list[alert]["percent_change"]:
-                                    msg += "% (**1H**)\n"
-                                elif "day" == alert_list[alert]["percent_change"]:
+                                if "day" == alert_list[alert]["percent_change"]:
                                     msg += "% (**24H**)\n"
                                 elif "week" == alert_list[alert]["percent_change"]:
                                     msg += "% (**7D**)\n"
@@ -448,14 +441,16 @@ class AlertFunctionality:
                                 msg += " **{}**\n".format(alert_fiat)
                             msg += "<@{}>".format(user)
                         else:
-                            msg = ("**{}** is no longer a valid currency "
-                                   "according to the coinmarketapi api. Alerts "
-                                   "related to this currency will be removed."
-                                   "".format(alert_currency.title()))
-                        em = discord.Embed(title="Alert **{}**".format(alert),
-                                           description=msg,
-                                           colour=0xFF9900)
-                        await self._say_msg(channel=channel_obj, emb=em)
+                            display_msg = False
+                            # msg = ("**{}** is no longer a valid currency "
+                            #        "according to the coinmarketapi api. Alerts "
+                            #        "related to this currency will be removed."
+                            #        "".format(alert_currency.title()))
+                        if display_msg:
+                            em = discord.Embed(title="Alert **{}**".format(alert),
+                                               description=msg,
+                                               colour=0xFF9900)
+                            await self._say_msg(channel=channel_obj, emb=em)
                     kwargs.clear()
             if raised_alerts:
                 for user in raised_alerts:

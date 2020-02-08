@@ -131,7 +131,7 @@ class CoreFunctionality:
         logger.info('Bot is online.')
         while True:
             time = datetime.datetime.now()
-            if time.minute == 0:
+            if time.minute == 0 and time.hour % 2 == 0:
                 minute = (time.hour * 60) + time.minute
                 await self._update_data(minute)
                 await asyncio.sleep(60)

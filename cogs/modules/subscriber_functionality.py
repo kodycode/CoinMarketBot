@@ -440,8 +440,7 @@ class SubscriberFunctionality:
             if rate not in self.supported_rates:
                 await self._say_msg("The rate entered is not supported. "
                                     "Current intervals you can choose are:\n"
-                                    "**default** - every hour\n"
-                                    "**2h** - every 2 hours\n"
+                                    "**default** - every 2 hours\n"
                                     "**3h** - every 3 hours\n"
                                     "**6h** - every 6 hours\n"
                                     "**12h** - every 12 hours\n"

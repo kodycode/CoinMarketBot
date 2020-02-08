@@ -43,23 +43,23 @@ class AlertCommands:
     #     """
     #     await self.cmd_function.alert.add_alert(ctx, currency, operator, btc_price, "USD", btc=True)
 
-    @commands.command(name='addah', pass_context=True)
-    async def addahour(self, ctx, currency: str, operator: str, percent: float, fiat='USD'):
-        """
-        Adds alert for when percent change in 1h of crypto meets the condition given
-        An example for this command would be:
-        "$addah bitcoin >= 2.5"
+    # @commands.command(name='addah', pass_context=True)
+    # async def addahour(self, ctx, currency: str, operator: str, percent: float, fiat='USD'):
+    #     """
+    #     Adds alert for when percent change in 1h of crypto meets the condition given
+    #     An example for this command would be:
+    #     "$addah bitcoin >= 2.5"
 
-        @param currency - cryptocurrency to set an alert of
-        @param operator - operator for the given choices
-                          <  - less than
-                          <= - less than or equal to
-                          >  - greater than
-                          >= - greater than or equal to
-        @param price - percent of 1h change to compare
-        @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
-        """
-        await self.cmd_function.alert.add_alert(ctx, currency, operator, percent, fiat, hour=True)
+    #     @param currency - cryptocurrency to set an alert of
+    #     @param operator - operator for the given choices
+    #                       <  - less than
+    #                       <= - less than or equal to
+    #                       >  - greater than
+    #                       >= - greater than or equal to
+    #     @param price - percent of 1h change to compare
+    #     @param fiat - desired fiat currency (i.e. 'EUR', 'USD')
+    #     """
+    #     await self.cmd_function.alert.add_alert(ctx, currency, operator, percent, fiat, hour=True)
 
     @commands.command(name='addad', pass_context=True)
     async def addaday(self, ctx, currency: str, operator: str, percent: float, fiat='USD'):

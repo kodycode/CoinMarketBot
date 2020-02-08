@@ -85,8 +85,7 @@ class SubscriberCommands:
         "$interval hourly"
 
         Possible rate inputs currently are:
-        "default" - posts every hour
-        "2h" - posts every 2 hours
+        "default" - posts every 2 hours
         "3h" - posts every 3 hours
         "6h" - posts every 6 hours
         "12h" - posts every 12 hours
