@@ -34,8 +34,4 @@ This bot has commands to look up cryptocurrencies, subscribe to live updates, cr
 Stay tuned for more features.
 
 ## Donations:
-All donations are greatly appreciated and they help very much with maintaining the live bot:
-
-[Patreon Page Here](https://www.patreon.com/coinmarketbot)
-
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XVWUDA7TZH2SU)
