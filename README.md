@@ -38,9 +38,4 @@ All donations are greatly appreciated and they help very much with maintaining t
 
 [Patreon Page Here](https://www.patreon.com/coinmarketbot)
 
-```
-ETH: 0x13318b2A795940D119b999ECfe827708131fA3f6
-LTC: LiChyn9o9VhppANUHDhe6ReFjGoGhLqtZm
-```
-
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XVWUDA7TZH2SU)
